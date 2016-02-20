@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Scale1Direction : MonoBehaviour {
+public class Scale1Direction : MonoBehaviour 
+{
 
     public bool castParticle = true;
 
@@ -14,8 +15,14 @@ public class Scale1Direction : MonoBehaviour {
 
 	public Vector3 originalScale;
 
-	public void Start(){
+	//For making it only scale up the first time ~Adam
+	bool mFirstTimeScalingDone = false;
 
+	//Reference to the other bar that is set in-editor ~Adam
+	[SerializeField] private Scale1Direction mOtherBar;
+
+	public void Start()
+	{
 		originalScale = transform.localScale;
 		originalPosition = transform.localPosition;
 	}
@@ -29,14 +36,23 @@ public class Scale1Direction : MonoBehaviour {
             castParticle = false;
         }
 
-		if (transform.localScale.x < desiredScale.x) {
+		if (transform.localScale.x < desiredScale.x && !mFirstTimeScalingDone) 
+		{
 
 			transform.localScale += new Vector3 (growAmount, 0, 0);
-		} else {
-
+		} 
+		else if(!mFirstTimeScalingDone)
+		{
 			if(transform.localScale.x != desiredScale.x){
 
 				transform.localScale = new Vector3(desiredScale.x, 1, transform.localScale.z);
+
+				mFirstTimeScalingDone = true;
+
+				if(mOtherBar != null)
+				{
+					mOtherBar.FirstScaleDone();
+				}
 			}
 		}
 
@@ -47,4 +63,10 @@ public class Scale1Direction : MonoBehaviour {
 
 	}
 
+	//Gets called by the other bar the first time the purple fills up ~Adam
+	public void FirstScaleDone()
+	{
+		mFirstTimeScalingDone = true;
+		transform.localScale = new Vector3(desiredScale.x, 1, transform.localScale.z);
+	}
 }
