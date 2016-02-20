@@ -27,7 +27,7 @@ public class GlowStuff : MonoBehaviour {
 
 				lightEffect.intensity += amount;
 
-				Time.timeScale = .3f;
+				Time.timeScale = .5f;
 
 			} else if (goDown) {
 
@@ -36,6 +36,7 @@ public class GlowStuff : MonoBehaviour {
 				if(lightEffect.intensity == 0){
 
 					Time.timeScale = 1;
+                    gameObject.GetComponent<GlowStuff>().enabled = false;
 				}
 			}
 		} else if (lightEffect.intensity > 2.3f) {

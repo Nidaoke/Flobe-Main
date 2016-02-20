@@ -11,7 +11,7 @@ public class TallyScore : MonoBehaviour
 	public GameObject leaderButt, retryButt, achieveButt;
 
 	bool newScore;
-	int score;
+	public int score;
 	string result;
 	Rect eScreen = new Rect(0,0,480,800);
 
@@ -41,8 +41,8 @@ public class TallyScore : MonoBehaviour
 	
 	void Update()
 	{
-
-		if (Input.GetKeyDown (KeyCode.Escape)) {
+        result = string.Format("{0:0000}", score);
+        if (Input.GetKeyDown (KeyCode.Escape)) {
 
 			Application.Quit();
 		}

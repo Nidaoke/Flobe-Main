@@ -3,6 +3,7 @@ using System.Collections;
 //using GooglePlayGames;
 //using GooglePlayGames.BasicApi;
 using UnityEngine.SocialPlatforms;
+using Steamworks;
 
 public class ScoreCenter : MonoBehaviour 
 {
@@ -59,6 +60,16 @@ public class ScoreCenter : MonoBehaviour
 			StopCoroutine(RadialBounce());
 			StartCoroutine(RadialBounce());
 			Additions();
+
+            int multiply;
+            SteamUserStats.GetStat("Multiplier", out multiply);
+
+            if (multiplier > multiply)
+            {
+
+                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().Multiplier = multiplier;
+                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+            }
 		}
 		/*else if(multTimer < multiplier && multTimer > 1)
 		{
@@ -107,15 +118,17 @@ public class ScoreCenter : MonoBehaviour
 	public void GameOver()
 	{
 		StopAllCoroutines();
-		score = 0;
+		
 		multTimer = 1;
 		multiplier = 1;
 
 		scoreMesh.text = "0000";
 		multiMesh.text = "x01";
-		
-		this.enabled = false;
+        score = 0;
+        this.enabled = false;
 		gameObject.SetActive(false);
+
+
 	}
 	
 	void Additions ()

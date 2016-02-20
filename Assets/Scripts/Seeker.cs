@@ -12,8 +12,15 @@ public class Seeker : Ball
 		transform.up = dir;
 	}
 
-	////void MoveSpeedInc(float amt)
-	//{
-	//	moveSpeed += amt;
-	//}
+    void OnDestroy()
+    {
+
+        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().MissilesDodged++;
+        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+    }
+
+    ////void MoveSpeedInc(float amt)
+    //{
+    //	moveSpeed += amt;
+    //}
 }

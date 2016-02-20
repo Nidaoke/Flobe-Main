@@ -113,10 +113,10 @@ public class TestFollower : MonoBehaviour {
 
 					if (transform.position.x <= otherPiece.transform.localPosition.x) {
 						
-						if (Input.GetKey (KeyCode.I)) {
+						if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
 							
 							rgbd.velocity = new Vector2 (0, speed);
-						} else if (Input.GetKey (KeyCode.K)) {
+						} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
 							
 							rgbd.velocity = new Vector2 (0, -speed);
 						} else {
@@ -125,10 +125,10 @@ public class TestFollower : MonoBehaviour {
 						}
 					} else {
 						
-						if (Input.GetKey (KeyCode.I)) {
+						if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
 							
 							rgbd.velocity = new Vector2 (-speed, speed);
-						} else if (Input.GetKey (KeyCode.K)) {
+						} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
 							
 							rgbd.velocity = new Vector2 (-speed, -speed);
 						} else {
@@ -136,12 +136,12 @@ public class TestFollower : MonoBehaviour {
 							rgbd.velocity = new Vector2 (-speed, 0);
 						}
 					}
-				} else if (Input.GetKey (KeyCode.L)) {
+				} else if (Input.GetKey (KeyCode.L) || Input.GetKey(KeyCode.RightArrow)) {
 					
-					if (Input.GetKey (KeyCode.I)) {
+					if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
 						
 						rgbd.velocity = new Vector2 (speed, speed);
-					} else if (Input.GetKey (KeyCode.K)) {
+					} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
 						
 						rgbd.velocity = new Vector2 (speed, -speed);
 					} else {
@@ -150,10 +150,10 @@ public class TestFollower : MonoBehaviour {
 					}
 				} else {
 					
-					if (Input.GetKey (KeyCode.I)) {
+					if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
 						
 						rgbd.velocity = new Vector2 (0, speed);
-					} else if (Input.GetKey (KeyCode.K)) {
+					} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
 						
 						rgbd.velocity = new Vector2 (0, -speed);
 					} else {
@@ -205,28 +205,7 @@ public class TestFollower : MonoBehaviour {
 			}
 		}
 		
-		/*GetComponent<Rigidbody> ().velocity = new Vector3 (speed, 0, 0);
-
-		rgbdVelocity = GetComponent<Rigidbody> ().velocity;
-
-
-
-		*/
-
-
-		/*void OnCollisionStay(Collision other){
-
-		if (other.gameObject == otherPiece) {
-
-			if(isLeft){
-
-				rgbd.velocity = new Vector2(-1, Input.GetAxis("JoystickLeftY") * speed);
-			}else{
-
-				rgbd.velocity = new Vector2(1, Input.GetAxis("JoystickLeftY") * speed);
-			}
-		}
-	}*/
+		
 
 	}
 
@@ -309,35 +288,7 @@ public class TestFollower : MonoBehaviour {
         if (grow)
         {
 
-            //if (transform.localScale.x < desiredScale.x)
-            /// {
-
-            //transform.localScale += new Vector3(growAmount, 0, 0);
-            // }
-            // else
-            // {
-
-            // transform.localScale = new Vector3(desiredScale.x, transform.localScale.y, 1);
-            //grow = false;
-            // }
-
-            // if (transform.localScale.y < desiredScale.y)
-            // {
-
-            //  transform.localScale += new Vector3(0, growAmount, 0);
-            // }
-            // else
-            // {
-
-            //   transform.localScale = new Vector3(transform.localScale.x, desiredScale.y, 1);
-            //grow = false;
-            // }
-
-            //if (transform.localScale == desiredScale)
-            //{
-
-            //  grow = false;
-            //Time.timeScale = 1f;
+            
             //}
 
             if (touching)
@@ -368,70 +319,14 @@ public class TestFollower : MonoBehaviour {
 
         }
 
-		//if (!canFlip) {
-
-			/*if(line != null){
-
-				if(line.GetComponent<Line>().hitMultiplier){
-					
-					canFlip = true;
-				}else{
-
-				canFlip = false;
-				}
-
-
-			}else{
-
-				if(GameObject.FindGameObjectWithTag("Line") != null){
-
-					line = GameObject.FindGameObjectWithTag("Line");
-				}
-			}
-		//}
-		*/
+		
 
 		if (Input.GetKeyDown (KeyCode.LeftControl)) {
 
 			isWASD = !isWASD;
 		}
 
-		/*if (isLeft) {
-
-			if(transform.position.x < otherPiece.transform.position.x){
-
-				rgbd.velocity = new Vector2(Input.GetAxis("JoystickLeftX") * speed, Input.GetAxis("JoystickLeftY") * speed);
-			}else{
-				
-				//rgbd.velocity = new Vector2(-.1f, 0);
-				transform.position = new Vector2(otherPiece.transform.position.x, transform.position.y);
-				rgbd.velocity = new Vector2(0, Input.GetAxis("JoystickLeftY") * speed);
-			}
-
-		} else {
-
-			if(transform.position.x > otherPiece.transform.position.x){
-
-				rgbd.velocity = new Vector2(Input.GetAxis("JoystickRightX") * speed, Input.GetAxis("JoystickRightY") * speed);
-			}else{
-				
-				//rgbd.velocity = new Vector2(.1f, 0);
-				transform.position = new Vector2(otherPiece.transform.position.x, transform.position.y);
-				rgbd.velocity = new Vector2(0, Input.GetAxis("JoystickLeftY") * speed);
-			}
-		}*/
-
-		/*if (rgbd.velocity.x == 0) {
-			
-			transform.position = new Vector2(lastPos.x, transform.position.y);
-		}
 		
-		if (rgbd.velocity.y == 0) {
-			
-			transform.position = new Vector2(transform.position.x, lastPos.y);
-		}
-
-		lastPos = new Vector2 (transform.position.x, transform.position.y);*/
 
 		if (isLeft) {
 

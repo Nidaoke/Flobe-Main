@@ -57,10 +57,12 @@ public class Bomb : Ball
 
 		 GetComponent<Animator>().enabled = false;
         GetComponent<SpriteRenderer>().sprite = null;
-		
 
-		yield return new WaitForSeconds (1f);
-       
+        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BombsExploded++;
+        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+
+        yield return new WaitForSeconds (1f);
+
         Destroy (gameObject);
 		Debug.Log ("Boom!");
 	}

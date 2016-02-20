@@ -5,6 +5,7 @@ using System.Collections;
 //using GoogleMobileAds;
 //using GoogleMobileAds.Api;
 using UnityEngine.SocialPlatforms;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour 
 {
@@ -22,7 +23,7 @@ public class GameController : MonoBehaviour
 	public GameObject title, tutorial, leaderButt, achieveButt;
 	public SpriteRenderer lineRend;
 	public Transform animationSlave;
-	public Transform[] pauseQuads;
+	//pausepublic Transform[] pauseQuads;
 	public bool gameOver, signedIn;
 	public GameObject flobeTitle;
 	public GUISkin tallyStyle;
@@ -48,7 +49,7 @@ public class GameController : MonoBehaviour
 	public GUIStyle m_styleButton = null;
 	public Rect m_giftizButton;*/
 
-	bool animationsReady, failAnimationComplete, paused, preGame = true;
+	public bool animationsReady, failAnimationComplete, preGame = true;
 	Vector3[] lastTouches, unpausePoints = new Vector3[2];
 	int sessionBalls, retries;
 
@@ -64,13 +65,7 @@ public class GameController : MonoBehaviour
 
 		//PlayGamesPlatform.Activate();									//On start the game begins Google Play sign in process
 		//anim.StopPlayback();
-		if(!signedIn)
-		{
-			Social.localUser.Authenticate((bool success) => {
-				if(success)
-				signedIn = true;
-			});
-		}
+		
 		if(PlayerPrefs.HasKey("ballTotal"))
 		{
 			sessionBalls = PlayerPrefs.GetInt("ballTotal");				//if the player has not played the game before their ball total will be 0 and will be set as such. This is to track achievements.
@@ -110,26 +105,51 @@ public class GameController : MonoBehaviour
 	void Update(){
 
 		if (!preGame && !gameOver) {
+
+            //Debug.Log("KEK!");
 			
 			if(Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button7)){
-				
-				if(paused){
-					
-					Pause(false);
-				}else{
-					
-					Pause(true);
-				}
-			}
+
+                Debug.Log(Time.timeScale);
+
+                if (Time.timeScale == 1)
+                {
+                    Debug.Log("WHY!!!!");
+                    Time.timeScale = 0;
+                }else
+                if (Time.timeScale == 0)
+                {
+
+                    Time.timeScale = 1;
+                }
+            }
 		}
 
 		if (preGame) {
 
-			if(Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button7)){
+			
 
-				GameBegin();
-			}
-		}
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                GameObject[] followers = GameObject.FindGameObjectsWithTag("Follower");
+                foreach (GameObject follower in followers)
+                {
+
+                    follower.GetComponent<TestFollower>().isWASD = true;
+                }
+                GameBegin();
+            }
+            if (Input.GetKeyDown(KeyCode.Joystick1Button7))
+            {
+                GameObject[] followers = GameObject.FindGameObjectsWithTag("Follower");
+                foreach (GameObject follower in followers)
+                {
+
+                    follower.GetComponent<TestFollower>().isWASD = false;
+                }
+                GameBegin();
+            }
+        }
 
 		if(Input.GetKeyDown(KeyCode.Joystick1Button6)){
 			
@@ -161,7 +181,7 @@ public class GameController : MonoBehaviour
 				GameBegin();								//begin the game (pregame = false, spawn + score scripts on)
 
 		}
-		else if(!paused && !gameOver) 						//if the game isn't pregame, paused or in the gameOver state
+		else if(!gameOver) 						//if the game isn't pregame, paused or in the gameOver state
 		{
 			//if(Input.touches.Length > 1)
 			{
@@ -317,11 +337,19 @@ public class GameController : MonoBehaviour
 
 	void ShowTally()
 	{
-		//adScr.HideBanner();
-		lineScr.Active(false);
-		tallyScr.enabled = true;
-		tallyScr.GameOver(scoreScr.score);
-		scoreScr.GameOver();
+
+        if (tallyScr.enabled == false)
+        {
+
+            Debug.Log("CheckEd!");
+
+            //adScr.HideBanner();
+            lineScr.Active(false);
+            tallyScr.enabled = true;
+            tallyScr.GameOver(scoreScr.score);
+            scoreScr.GameOver();
+        }
+        
 	}
 
 	public void ResetGame()
@@ -333,7 +361,7 @@ public class GameController : MonoBehaviour
 		//flobeTitle.Play("FlobeTitle",-1,0f);
 		StartCoroutine(MusicFade(0));
 		tallyScr.enabled = false;
-		paused = false;
+		//paused = false;
 		gameOver = false;
 		preGame = true;
 
@@ -370,71 +398,14 @@ public class GameController : MonoBehaviour
 		
 		currentBackground = backgrounds[Random.Range(0, backgrounds.Length)];
 		currentBackground.SetActive(true);
+
+        //Application.LoadLevel(0);
+        SceneManager.LoadScene(1);
 	}
 		
-	void Pause(bool on)
-	{
-		//paused = on;																								//sets state bool
-		if(on)																										//if you want to pause the game
-		{
-			Time.timeScale = 0;																							//set the timescale
+	
 
-			paused = true;
-
-			for(int i = 0; i < 2; i++)																					//for the two pulsing pads
-			{
-				//unpausePoints[i] = Camera.main.ScreenToWorldPoint(new Vector2(lastTouches[i].x,lastTouches[i].y));		//find the point it should be at
-				//unpausePoints[i] = new Vector3(unpausePoints[i].x,unpausePoints[i].y,-9);									//correct the z
-				//pauseQuads[i].position = unpausePoints[i];																//assign the objects the position
-					
-			}
-			//pauseQuads[2].position = new Vector3(0,3.2f,-8);															//assign the pause fade position
-			spawnScr.StopCoroutine("Spawn");																			//stop spawning
-			StartCoroutine(CheckUnpause());																				//start the check for unpausing conditions
-		}
-		else
-		{
-			paused = false;
-
-			Time.timeScale = 1;																							//restart time
-			for(int i = 0; i < 3; i++)																					//reset each pause quad
-				pauseQuads[i].position = new Vector3(0,0,-10);
-			spawnScr.StartCoroutine("Spawn");																			//start spawning again
-		}
-		foreach (GameObject b in GameObject.FindGameObjectsWithTag("Ball")) {
-
-			//set each ball in the scene to their equivalent move state
-
-			if(b.GetComponent<Ball>() != null){
-
-				b.GetComponent<Ball>().Pause(on);
-			}
-		}
-	}
-
-	IEnumerator CheckUnpause()
-	{
-		Vector2[] ts = new Vector2[2];
-		while(true) 
-		{	
-			int s = 0;
-			if(Input.touches.Length > 1)
-			{
-				for(int i = 0; i < 2; i++)
-				{
-					ts[i] = Input.touches[i].position;
-					ts[i] = Camera.main.ScreenToWorldPoint(ts[i]);
-					if(TouchRepeatButton(unpausePoints[0],0.5f,ts[i]) || TouchRepeatButton(unpausePoints[1],0.5f,ts[i]))
-						s++;
-				}
-			}
-
-			if(s == 2)
-				break;
-			yield return null;
-		}
-		//Pause(false);
-	}
+	
 	
 	bool TouchRepeatButton(Vector2 position, float size, Vector2 check)
 	{

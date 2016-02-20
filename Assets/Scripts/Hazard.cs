@@ -10,8 +10,10 @@ public class Hazard : Ball
 		transform.localScale = Vector3.one*Mathf.Clamp(Random.Range(transform.localScale.x-sizeVariance,transform.localScale.x+sizeVariance),0.25f,10f);
 	}
 
-	//void MoveSpeedInc(float amt)
-	//{
-	//	moveSpeed += amt;
-	//}
+    void OnDestroy()
+    {
+
+        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().GreensDodged++;
+        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+    }
 }

@@ -1,8 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Steamworks;
 
 public class Line : MonoBehaviour 
 {
+    public float purpBlueTimer;
+    public float maxPurpBlueTimer;
+
+    public bool hitABlue;
+    public bool hitAPurp;
+
+    public int min;
+    public int sec;
+
+    public float timeCount;
+    public float startTime;
+
+   // public float gameTime;
+
     public GameObject purpleFill;
 
 	public Spawner spawnScr;
@@ -30,6 +45,12 @@ public class Line : MonoBehaviour
 	public void Start(){
 
 		maxTimer = timer;
+
+        startTime = Time.time;
+
+        maxPurpBlueTimer = purpBlueTimer;
+
+        purpBlueTimer = 0;
 	}
 
 	public void Active(bool on)
@@ -40,10 +61,38 @@ public class Line : MonoBehaviour
 
 	public void Update(){
 
-		if (Input.GetKeyDown (KeyCode.Tab)) {
+        if (purpBlueTimer > 0)
+        {
 
-			hitMultiplier = true;
-		}
+            purpBlueTimer -= Time.timeScale;
+        }
+        else
+        {
+
+            hitAPurp = false;
+            hitABlue = false;
+        }
+
+        if (hitABlue && hitAPurp)
+        {
+
+            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_DOUBLE_DIPPER, "ACH_DOUBLE_DIPPER", "a"));
+        }
+
+        timeCount = Time.time * 2 - startTime;
+        min = (int)(timeCount / 60);
+        sec = (int)(timeCount % 60);
+
+        if (min == 5)
+        {
+
+            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_SURVIVOR, "ACH_SURVIVOR", "a"));
+        }
+
+		//if (Input.GetKeyDown (KeyCode.Tab)) {
+
+		//	hitMultiplier = true;
+		//}
 
 		rightTrigger = Input.GetAxis ("JoystickRightTrigger");
 
@@ -62,7 +111,9 @@ public class Line : MonoBehaviour
 
 			hitMultiplier = true;
 			Debug.Log("DO GLOW THINGY!");
-		}
+            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_DOUBLE_TROUBLE, "ACH_DOUBLE_TROUBLE", "a"));
+           // GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements> ().UnlockAchievement(GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements> ().)
+        }
 
 		if (hitMultiplier) {
 
@@ -92,14 +143,14 @@ public class Line : MonoBehaviour
 
 			//if (Input.GetKeyDown (KeyCode.Joystick1Button5)) {
 
-			if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.Q)){
+			if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.LeftShift)){
 
 				purple.SetActive(false);
 				purple2.SetActive(true);
 			}
 		} else if (purple2.activeSelf) {
 
-			if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.Q)){
+			if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.LeftShift)){
 				
 				purple.SetActive(true);
 				purple2.SetActive(false);
@@ -154,8 +205,8 @@ public class Line : MonoBehaviour
 
 			if(obj.gameObject.GetComponent<Bomb>() != null){
 				
-
-				obj.gameObject.GetComponent<Bomb> ().Boom();
+                if(obj.gameObject.GetComponent<Bomb> ().moveSpeed > 0)
+				    obj.gameObject.GetComponent<Bomb> ().Boom();
 			}
 		}
 	}
@@ -178,10 +229,16 @@ public class Line : MonoBehaviour
 							
 							//GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
 							Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
-							
-							//obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
-							
-							scoreScr.AddScore ();
+
+                            //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
+
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().PurplesCollected++;
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+
+                            hitAPurp = true;
+                            purpBlueTimer = 20f;
+
+                            scoreScr.AddScore ();
 							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
 							obj.SendMessage ("DestroyBall");
 						}else if(obj.tag == "Ball"){
@@ -190,7 +247,8 @@ public class Line : MonoBehaviour
 							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
 							//			p.
 							GameController.instance.StartCoroutine ("EndGame");
-						}
+                            GetComponent<Line>().enabled = false;
+                        }
 					}else if(purple2.activeSelf){
 
 						if(obj.tag == "Ball"){
@@ -205,6 +263,13 @@ public class Line : MonoBehaviour
 
                             //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
 
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+
+                            hitABlue = true;
+                            purpBlueTimer = 20f;
+
+
                             scoreScr.AddScore ();
 							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
 							obj.SendMessage ("DestroyBall");
@@ -214,7 +279,8 @@ public class Line : MonoBehaviour
 							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
 							//			p.
 							GameController.instance.StartCoroutine ("EndGame");
-						}
+                            GetComponent<Line>().enabled = false;
+                        }
 					}
 				}else{
 
@@ -227,13 +293,19 @@ public class Line : MonoBehaviour
 
                                 Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
                             }
-							
-							//GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
-							
-							
-							//obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
-							
-							scoreScr.AddScore ();
+
+                            //GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
+
+
+                            //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
+
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+
+                            hitABlue = true;
+                            purpBlueTimer = 20f;
+
+                            scoreScr.AddScore ();
 							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
 							obj.SendMessage ("DestroyBall");
 						}else if(obj.tag == "Purple"){
@@ -242,7 +314,8 @@ public class Line : MonoBehaviour
 							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
 							//			p.
 							GameController.instance.StartCoroutine ("EndGame");
-						}
+                            GetComponent<Line>().enabled = false;
+                        }
 					}else if(purple2.activeSelf){
 
 						if(obj.tag == "Purple"){
@@ -257,6 +330,12 @@ public class Line : MonoBehaviour
 
                             //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
 
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().PurplesCollected++;
+                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+
+                            hitAPurp = true;
+                            purpBlueTimer = 20f;
+
                             scoreScr.AddScore ();
 							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
 							obj.SendMessage ("DestroyBall");
@@ -266,7 +345,8 @@ public class Line : MonoBehaviour
 							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
 							//			p.
 							GameController.instance.StartCoroutine ("EndGame");
-						}
+                            GetComponent<Line>().enabled = false;
+                        }
 					}
 				}
 			} else {
@@ -280,6 +360,12 @@ public class Line : MonoBehaviour
                 }
 
                 //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
+
+                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
+                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+
+                hitABlue = true;
+                purpBlueTimer = 20f;
 
                 scoreScr.AddScore ();
 				//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
@@ -337,6 +423,7 @@ public class Line : MonoBehaviour
                         //			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
                         //			p.
                         GameController.instance.StartCoroutine("EndGame");
+                        GetComponent<Line>().enabled = false;
                     }
                 }
 
@@ -350,6 +437,7 @@ public class Line : MonoBehaviour
                 //			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
                 //			p.
                 GameController.instance.StartCoroutine("EndGame");
+                GetComponent<Line>().enabled = false;
             }
 
 		//	if(obj.gameObject.GetComponent<Bomb>() != null){
