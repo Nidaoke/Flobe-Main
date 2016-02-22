@@ -53,6 +53,9 @@ public class GameController : MonoBehaviour
 	Vector3[] lastTouches, unpausePoints = new Vector3[2];
 	int sessionBalls, retries;
 
+
+	[SerializeField] private StartInstructionsFade mStartInstructions; //For having instructions fade out when the game starts ~Adam
+
 	void Awake()
 	{
 		instance = this;
@@ -299,6 +302,11 @@ public class GameController : MonoBehaviour
 		audioS.clip = songs[Random.Range(0, songs.Length)];
 		audioS.Play ();
 
+		//For having instructions fade out when the game starts ~Adam
+		if(mStartInstructions != null)
+		{
+			mStartInstructions.StartFade();
+		}
 	}
 
 	IEnumerator EndGame()

@@ -40,6 +40,7 @@ public class Scale1Direction : MonoBehaviour
 		{
 
 			transform.localScale += new Vector3 (growAmount, 0, 0);
+			mOtherBar.MatchScaling();
 		} 
 		else if(!mFirstTimeScalingDone)
 		{
@@ -64,6 +65,10 @@ public class Scale1Direction : MonoBehaviour
 	}
 
 	//Gets called by the other bar the first time the purple fills up ~Adam
+	public void MatchScaling()
+	{
+		transform.localScale = mOtherBar.transform.localScale;
+	}
 	public void FirstScaleDone()
 	{
 		mFirstTimeScalingDone = true;
