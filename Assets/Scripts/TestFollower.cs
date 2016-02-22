@@ -296,7 +296,7 @@ public class TestFollower : MonoBehaviour {
 
                 timer -= Time.timeScale;
 
-                Time.timeScale = .3f;
+                //Time.timeScale = .3f;
 
                 transform.localScale += new Vector3(growAmount, 0, 0);
                 transform.localScale += new Vector3(0, growAmount, 0);

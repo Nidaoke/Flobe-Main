@@ -36,7 +36,7 @@ public class ColorUtility : MonoBehaviour
 			if(hue > 360)
 				hue = 0;
 			currentColor = RGBFromHue(hue);
-			bgEffects.backgroundColor = currentColor;
+			//bgEffects.backgroundColor = currentColor;
 			yield return null;
 		}
 	}
