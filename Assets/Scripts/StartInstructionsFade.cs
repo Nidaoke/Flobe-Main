@@ -23,6 +23,9 @@ public class StartInstructionsFade : MonoBehaviour
 
 	IEnumerator FadeOutInstructions()
 	{
+        // GetComponent<Rigidbody>().velocity = new Vector3(0, -5, 0);
+        GetComponent<Rigidbody>().useGravity = true;
+
 		yield return new WaitForSeconds(mFadeDelay);
 
 		float alpha = mSpriteRenderer.material.color.a;
@@ -30,6 +33,7 @@ public class StartInstructionsFade : MonoBehaviour
 		{
 			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha,0,t));
 			mSpriteRenderer.material.color = newColor;
+            Debug.Log(mSpriteRenderer.material.color.a);
 			yield return null;
 		}
 	}//END of FadeOutInstructions()

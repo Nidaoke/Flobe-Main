@@ -39,12 +39,12 @@ public class GlowStuff : MonoBehaviour {
                     gameObject.GetComponent<GlowStuff>().enabled = false;
 				}
 			}
-		} else if (lightEffect.intensity > 2.3f) {
+		} else if (lightEffect.intensity > 1.65f) {
 
 			goUp = false;
 			goDown = true;
 
-			lightEffect.intensity = 2.3f;
+			lightEffect.intensity = 1.65f;
 		}
 	}
 }

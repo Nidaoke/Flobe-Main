@@ -399,7 +399,7 @@ public class GameController : MonoBehaviour
 		audioS.clip = songs[Random.Range(0, songs.Length)];
 		audioS.Play ();
 
-		foreach (GameObject bg in backgrounds) {
+		/*foreach (GameObject bg in backgrounds) {
 			
 			bg.SetActive(false);
 		}
@@ -407,7 +407,7 @@ public class GameController : MonoBehaviour
 		currentBackground = backgrounds[Random.Range(0, backgrounds.Length)];
 		currentBackground.SetActive(true);
 
-        //Application.LoadLevel(0);
+        //Application.LoadLevel(0);*/
         SceneManager.LoadScene(1);
 	}
 		
