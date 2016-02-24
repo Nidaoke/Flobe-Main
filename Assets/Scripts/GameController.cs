@@ -128,11 +128,13 @@ public class GameController : MonoBehaviour
             }
 		}
 
-		if (preGame) {
+		if (preGame) 
+		{
 
 			
 
-            if (Input.GetKeyDown(KeyCode.Space))
+			if ( (Application.platform != RuntimePlatform.LinuxPlayer && Input.GetKeyDown(KeyCode.Space)) ||
+				(Application.platform == RuntimePlatform.LinuxPlayer && Input.GetKeyDown(KeyCode.F)) )
             {
                 GameObject[] followers = GameObject.FindGameObjectsWithTag("Follower");
                 foreach (GameObject follower in followers)

@@ -78,7 +78,7 @@ public class ScoreCenter : MonoBehaviour
 		}*/
 		if(spawnScr.hazardChance >= 0.3f)
 			spawnScr.hazardChance = 0.3f;
-		multiMesh.text = string.Format("x{0:00}", multiplier);
+		multiMesh.text = string.Format("{0:00}", multiplier);
 		multiplierVisual.material.SetFloat("_Cutoff",Mathf.Clamp(1-(multTimer-Mathf.FloorToInt(multTimer)),0.001f,1));
 	}
 
@@ -123,7 +123,7 @@ public class ScoreCenter : MonoBehaviour
 		multiplier = 1;
 
 		scoreMesh.text = "0000";
-		multiMesh.text = "x01";
+		multiMesh.text = "01";
         score = 0;
         this.enabled = false;
 		gameObject.SetActive(false);

@@ -83,7 +83,7 @@ public class TallyScore : MonoBehaviour
 
 		//GUI.Box(new Rect(100,150,eScreen.width-200,eScreen.height-400),"",gameStyle.box);
 
-		GUI.Box(new Rect(605,150,eScreen.width-200-50,200),result,gameStyle.box);
+		GUI.Box(new Rect(555,150,eScreen.width-100-50,300),result,gameStyle.box);
 
 		if(newScore)
 			GUI.Label(new Rect(125,350,eScreen.width-200-50,50),"new best",gameStyle.label);
