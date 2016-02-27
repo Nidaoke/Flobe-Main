@@ -351,7 +351,7 @@ public class GameController : MonoBehaviour
         if (tallyScr.enabled == false)
         {
 
-            Debug.Log("CheckEd!");
+            //Debug.Log("CheckEd!");
 
             //adScr.HideBanner();
             lineScr.Active(false);

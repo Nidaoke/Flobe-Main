@@ -25,7 +25,26 @@ public class ScoreCenter : MonoBehaviour
 	bool lerping;
 	float multTimer = 2f;
 
+    public void Awake()
+    {
+
+        if (multiplierVisual.gameObject.activeSelf == false)
+        {
+
+
+            scoreMesh.text = string.Format("{0:0000}", PlayerPrefs.GetInt("bestScoreLocal"));
+        }
+    }
+
 	public void Update(){
+
+        if (multiplierVisual.gameObject.activeSelf == false)
+        {
+
+            multiplierVisual.gameObject.SetActive(true);
+            scoreMesh.text = string.Format("{0:0000}", score);
+            scoreMesh.gameObject.transform.position = new Vector3(scoreMesh.gameObject.transform.position.x - 1.2f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
+        }
 
 	///	transform.position = new Vector3 (-16, 6.45f, 2);
 		transform.localScale = new Vector3 (2.2f, 2.2f, 1);
@@ -143,6 +162,8 @@ public class ScoreCenter : MonoBehaviour
 		if(multiplier > 20)
 			spawnScr.homingChance += 0.0005f;
 	}
+
+    //PlayerPrefs
 	
 	public void ResetMultiplier ()
 	{

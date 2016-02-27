@@ -8,6 +8,8 @@ public class Ball : MonoBehaviour
 	protected bool missed;
 	protected Vector3 dir;
 
+    public bool isBottomSeeker = false;
+
 	public GameObject pop;
 
 	void Awake() 
@@ -38,18 +40,42 @@ public class Ball : MonoBehaviour
 	
 	IEnumerator Move()
 	{
-		StartCoroutine(ApproachEffect());
-		Rigidbody2D rb = GetComponent<Rigidbody2D>();
-		while(transform.position.y > -4.5f)
-		{
-			if(GameController.instance.gameOver)
-				yield break;
-			rb.MovePosition(transform.position + dir * Time.deltaTime * moveSpeed);
-			yield return new WaitForFixedUpdate();
-		}
-		missed = true;
-		Destroy(this.gameObject);
-	}
+        yield return new WaitForSeconds(.1f);
+
+        if (!isBottomSeeker)
+        {
+
+            StartCoroutine(ApproachEffect());
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            while (transform.position.y > -4.5f)
+            {
+                if (GameController.instance.gameOver)
+                    yield break;
+                rb.MovePosition(transform.position + dir * Time.deltaTime * moveSpeed);
+                yield return new WaitForFixedUpdate();
+            }
+            missed = true;
+            Destroy(this.gameObject);
+        }
+        else
+        {
+
+            StartCoroutine(ApproachEffect());
+            Rigidbody2D rb = GetComponent<Rigidbody2D>();
+            while (transform.position.y < 14f)
+            {
+                if (GameController.instance.gameOver)
+                    yield break;
+                rb.MovePosition(transform.position + dir * Time.deltaTime * moveSpeed);
+                yield return new WaitForFixedUpdate();
+            }
+
+            missed = true;
+            Destroy(this.gameObject);
+        }
+
+
+    }
 
 	IEnumerator ApproachEffect()
 	{

@@ -33,7 +33,7 @@ public class StartInstructionsFade : MonoBehaviour
 		{
 			Color newColor = new Color(1, 1, 1, Mathf.Lerp(alpha,0,t));
 			mSpriteRenderer.material.color = newColor;
-            Debug.Log(mSpriteRenderer.material.color.a);
+           // Debug.Log(mSpriteRenderer.material.color.a);
 			yield return null;
 		}
 	}//END of FadeOutInstructions()

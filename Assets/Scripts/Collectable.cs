@@ -33,6 +33,8 @@ public class Collectable : Ball
 			GameObject c = Instantiate (ballMiss, transform.position, Quaternion.identity) as GameObject;
 			c.GetComponent<AudioSource>().PlayOneShot(alert);
 			GameController.instance.scoreScr.ResetMultiplier();
+
+            GameObject.FindObjectOfType<SeekerSpawner>().SpawnSeeker();
 		}
 	}
 }
