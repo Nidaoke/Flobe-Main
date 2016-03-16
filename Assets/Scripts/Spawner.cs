@@ -10,6 +10,8 @@ public class Spawner : MonoBehaviour
 	public bool ballNext = false;													//create bool to track whether a ball should be spawned next
 	int thisAngle;
 
+	public bool pauseSpawning;
+
 	public bool hitMulti;
 	public bool hitMulti2;
 	public bool hitMulti3;
@@ -39,7 +41,7 @@ public class Spawner : MonoBehaviour
 
 		if (!hitMulti3) {
 			
-			if(GameController.instance.scoreScr.multiplier >= 15){
+			if(GameController.instance.scoreScr.multiplier >= 10){
 				
 				hitMulti3 = true;
 				scoreScr.spawnScr.multiLevel /= 3;
@@ -53,7 +55,7 @@ public class Spawner : MonoBehaviour
 		while(true)																//infinite loop
 		{
 			thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
-			transform.parent.rotation = Quaternion.Euler(0,0,thisAngle-45);			//rotates,adjusts to suit editor setup
+			transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
 
 			GameObject spawn = ball;
 
@@ -105,27 +107,34 @@ public class Spawner : MonoBehaviour
 			if(hazardCounter < 1)												//if the balls have caught up to the hazards
 				ballNext = false;													//release the requirement to force-spawn another
 
-			GameObject b = Instantiate(spawn,transform.position,Quaternion.identity) as GameObject;		//create the ball that was resolved to be spawned
-			//b.SendMessage("MoveSpeedInc",scoreScr.multiplier/ballSpeedScale);							//increment its move speed accordingly
+			if(!pauseSpawning){
+				
+				GameObject b = Instantiate(spawn,transform.position,Quaternion.identity) as GameObject;		//create the ball that was resolved to be spawned
 
-			if(b.GetComponent<Collectable> () != null){
+				if(b.GetComponent<Collectable> () != null){
 
-				b.GetComponent<Ball>().moveSpeed += multiLevel2/ballSpeedScale;
-			}else{
+					b.GetComponent<Ball>().moveSpeed += multiLevel2/ballSpeedScale;
+				}else{
 
-				b.GetComponent<Ball>().moveSpeed += multiLevel/ballSpeedScale;
+					b.GetComponent<Ball>().moveSpeed += multiLevel/ballSpeedScale;
+				}
+
+				b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
+
 			}
+
 			yield return new WaitForSeconds(cooldown);													//wait until the next spawn cycle
+		
 		}
 	}
 
 	int SpacingFilter(int lastAngle)
 	{
-		int angle = Random.Range(5,120), dir = angle - lastAngle;		//rolls an angle in bounds. finds the the direction and magnitude of change.
+		int angle = Random.Range(-70,70), dir = angle - lastAngle;		//rolls an angle in bounds. finds the the direction and magnitude of change.
 		if(Mathf.Abs(dir) > spacing)									//if the magnitude is greater than the minimum ball spacing
 			return angle;													//return it unchanged
 		int spaced = lastAngle + spacing*(int)Mathf.Sign(dir);			//otherwise, create a test value.
-		if(Mathf.Clamp(spaced,5,120) != spaced)							//use it to see if the spacing in the direction requested goes outside the boundaries
+		if(Mathf.Clamp(spaced,-70,70) != spaced)							//use it to see if the spacing in the direction requested goes outside the boundaries
 			return lastAngle + spacing*-(int)Mathf.Sign(dir);				//if it does, return it on the other side of the last spawned ball, spaced
 		return spaced;													//if it doesn't, return it spaced
 	}

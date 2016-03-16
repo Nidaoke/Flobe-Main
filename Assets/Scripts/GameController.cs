@@ -9,11 +9,14 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour 
 {
+	#region variables
+
 	public static GameController instance;									//gamecontroller script reference for all other scripts
 	public BGEffects bgScr;
 	public Spawner spawnScr;
 	public ScoreCenter scoreScr;
 	public Line lineScr;
+	public Line lineScr2;
 	public TallyScore tallyScr;
 	public ColorUtility colorScr;
 	//public AdHandler adScr;
@@ -39,22 +42,18 @@ public class GameController : MonoBehaviour
 
 	public GameObject leftObject;
 	public GameObject rightObject;
-	
-	/*//giftiz things
-	public static Rect m_screenRect	= new Rect(0, 0, 640, 960);
-	public Texture2D m_textureInvisible	= null;
-	public Texture2D m_textureNaked	= null;
-	public Texture2D m_textureBadge	= null;
-	public Texture2D m_textureWarning = null;
-	public GUIStyle m_styleButton = null;
-	public Rect m_giftizButton;*/
+
+	public GameObject leftObject2;
+	public GameObject rightObject2;
 
 	public bool animationsReady, failAnimationComplete, preGame = true;
-	Vector3[] lastTouches, unpausePoints = new Vector3[2];
+	Vector3[] lastTouches, lastTouches2, unpausePoints = new Vector3[2];
 	int sessionBalls, retries;
 
 
 	[SerializeField] private StartInstructionsFade mStartInstructions; //For having instructions fade out when the game starts ~Adam
+
+	#endregion
 
 	void Awake()
 	{
@@ -113,11 +112,11 @@ public class GameController : MonoBehaviour
 			
 			if(Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button7)){
 
-                Debug.Log(Time.timeScale);
+                //Debug.Log(Time.timeScale);
 
                 if (Time.timeScale == 1)
                 {
-                    Debug.Log("WHY!!!!");
+                    
                     Time.timeScale = 0;
                 }else
                 if (Time.timeScale == 0)
@@ -177,10 +176,7 @@ public class GameController : MonoBehaviour
 			{
 			Vector3 touch = Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position);
 			Vector2 touchPos = new Vector2(touch.x, touch.y);
-				//if(leaderButt.GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos))
-					//Social.ShowLeaderboardUI();
-				//if(achieveButt.GetComponent<Collider2D>() == Physics2D.OverlapPoint(touchPos))
-					//Social.ShowAchievementsUI();
+
 			}
 			if(animationsReady && Input.touches.Length > 1)
 				GameBegin();								//begin the game (pregame = false, spawn + score scripts on)
@@ -200,6 +196,16 @@ public class GameController : MonoBehaviour
 				};
 
 				lineScr.UpdateLine(lastTouches);
+
+				if (lineScr.twoPlayer) {
+					lastTouches2 = new Vector3[]{
+
+						rightObject2.transform.position,
+						leftObject2.transform.position
+					};
+
+					lineScr2.UpdateLine(lastTouches2);
+				}
 
 				if(rightObject.GetComponent<TestFollower> ().useParticle){
 					
@@ -221,6 +227,49 @@ public class GameController : MonoBehaviour
 					}
 					
 					//lineScr.pieces[0].GetComponentsInChildren<ParticleSystem> ().enableEmission = false;
+				}
+
+				if (lineScr.twoPlayer) {
+
+					if(rightObject2.GetComponent<TestFollower2> ().useParticle){
+
+						ParticleSystem[] particles0 = lineScr2.pieces[0].GetComponentsInChildren<ParticleSystem> ();
+
+						foreach(ParticleSystem newPartcile in particles0){
+
+							newPartcile.enableEmission = true;
+						}
+
+						//lineScr.pieces[0].GetComponentsInChildren<ParticleSystem> ().enableEmission = true;
+					}else{
+
+						ParticleSystem[] particles0 = lineScr2.pieces[0].GetComponentsInChildren<ParticleSystem> ();
+
+						foreach(ParticleSystem newPartcile in particles0){
+
+							newPartcile.enableEmission = false;
+						}
+
+						//lineScr.pieces[0].GetComponentsInChildren<ParticleSystem> ().enableEmission = false;
+					}
+
+					if(leftObject2.GetComponent<TestFollower2> ().useParticle){
+
+						ParticleSystem[] particles0 = lineScr2.pieces[1].GetComponentsInChildren<ParticleSystem> ();
+
+						foreach(ParticleSystem newPartcile in particles0){
+
+							newPartcile.enableEmission = true;
+						}
+					}else{
+
+						ParticleSystem[] particles0 = lineScr2.pieces[1].GetComponentsInChildren<ParticleSystem> ();
+
+						foreach(ParticleSystem newPartcile in particles0){
+
+							newPartcile.enableEmission = false;
+						}
+					}
 				}
 
 				if(leftObject.GetComponent<TestFollower> ().useParticle){
@@ -248,30 +297,6 @@ public class GameController : MonoBehaviour
 		}
 
 	}
-	
-	/*public void BallCountCheck()
-	{
-		sessionBalls++;
-		Debug.Log (sessionBalls);
-		switch(sessionBalls)
-		{
-		case 100:
-			Social.ReportProgress("CgkI052F_vMSEAIQAQ", 100.0f, (bool success) => {});
-			break;
-		case 500:
-			Social.ReportProgress("CgkI052F_vMSEAIQAg", 100.0f, (bool success) => {});
-			break;
-		case 1000:
-			Social.ReportProgress("CgkI052F_vMSEAIQAw", 100.0f, (bool success) => {});
-			break;
-		case 2000:
-			Social.ReportProgress("CgkI052F_vMSEAIQBA", 100.0f, (bool success) => {});
-			break;
-		case 4000:
-			Social.ReportProgress("CgkI052F_vMSEAIQBQ", 100.0f, (bool success) => {});
-			break;
-		}
-	}*/
 
 	IEnumerator MusicFade(int start)
 	{
@@ -294,6 +319,16 @@ public class GameController : MonoBehaviour
 			rightObject.transform.position,
 			leftObject.transform.position
 		});
+
+		if (lineScr.twoPlayer) {
+
+			lineScr2.Active(true);
+			lineScr2.UpdateLine (new Vector3[]{
+
+				rightObject2.transform.position,
+				leftObject2.transform.position
+			});
+		}
 		//lineScr.UpdateLine(new Vector3[]{Input.touches[0].position,Input.touches[1].position});
 		spawnScr.hazardChance = 0.15f;
 		spawnScr.StartCoroutine("Spawn");
@@ -355,6 +390,7 @@ public class GameController : MonoBehaviour
 
             //adScr.HideBanner();
             lineScr.Active(false);
+			if(lineScr.twoPlayer) lineScr2.Active(false);
             tallyScr.enabled = true;
             tallyScr.GameOver(scoreScr.score);
             scoreScr.GameOver();
@@ -383,10 +419,25 @@ public class GameController : MonoBehaviour
 		lineScr.purple2.transform.localPosition = lineScr.purple2.GetComponent<Scale1Direction> ().originalPosition;
 		lineScr.purple2.transform.localScale = lineScr.purple2.GetComponent<Scale1Direction> ().originalScale;
 
+		if (lineScr.twoPlayer) {
+			lineScr2.GetComponent<Line> ().hitMultiplier = false;
+
+			lineScr2.purple.transform.localPosition = lineScr2.purple.GetComponent<Scale1Direction> ().originalPosition;
+			lineScr2.purple.transform.localScale = lineScr2.purple.GetComponent<Scale1Direction> ().originalScale;
+
+			lineScr2.purple2.transform.localPosition = lineScr2.purple2.GetComponent<Scale1Direction> ().originalPosition;
+			lineScr2.purple2.transform.localScale = lineScr2.purple2.GetComponent<Scale1Direction> ().originalScale;
+		}
+
 		//rightObject.transform.position = rightObject.GetComponent<TestFollower> ().startPos;
 		//leftObject.transform.position = leftObject.GetComponent<TestFollower> ().startPos;
 		leftObject.GetComponent<TestFollower> ().ResetPosition ();
 		rightObject.GetComponent<TestFollower> ().ResetPosition ();
+
+		if (lineScr.twoPlayer) {
+			leftObject2.GetComponent<TestFollower2> ().ResetPosition ();
+			rightObject2.GetComponent<TestFollower2> ().ResetPosition ();
+		}
 
 		GameBegin ();
 		//tutorial.SetActive(true);
@@ -412,11 +463,7 @@ public class GameController : MonoBehaviour
         //Application.LoadLevel(0);*/
         SceneManager.LoadScene(1);
 	}
-		
-	
 
-	
-	
 	bool TouchRepeatButton(Vector2 position, float size, Vector2 check)
 	{
 		return Vector2.Distance(position,check) < size;
@@ -444,37 +491,4 @@ public class GameController : MonoBehaviour
 		//flobeTitle.Play("FlobeTitle");
 		yield return null;
 	}
-	
-	/*public static Rect UpdateDimension(Rect position, float dy = 0.0f)
-	{
-		position.y += dy;
-		return (new Rect(
-			(position.x / m_screenRect.width) * Screen.width,
-			(position.y / m_screenRect.height) * Screen.height,
-			(position.width / m_screenRect.width) * Screen.width,
-			(position.height / m_screenRect.height) * Screen.height
-			));
-	}
-	
-	public void OnGUI () 
-	{
-		m_styleButton.active.background = GetGiftizButtonTexture(); // get correct texture
-		m_styleButton.normal.background = m_styleButton.active.background; 
-		if (GUI.Button(UpdateDimension(m_giftizButton), "", m_styleButton) == true) 
-			GiftizBinding.buttonClicked(); // Giftiz Button has been clicked
-	} 
-	
-	public Texture2D GetGiftizButtonTexture () 
-	{ 
-		Texture2D inter = null; 
-		// depending on button state, select the right image texture
-		switch (GiftizBinding.giftizButtonState) 
-		{ 
-			case GiftizBinding.GiftizButtonState.Invisible : inter = m_textureInvisible; break; 	
-			case GiftizBinding.GiftizButtonState.Naked : inter = m_textureNaked; break; 
-			case GiftizBinding.GiftizButtonState.Badge : inter = m_textureBadge; break; 	
-			case GiftizBinding.GiftizButtonState.Warning : inter = m_textureWarning; break; 
-		} 
-		return inter; 
-	}*/
 }

@@ -1,19 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TestFollower : MonoBehaviour {
+public class TestFollower2 : MonoBehaviour {
 
-    public Vector3 desiredScale;
-    public Vector3 currentScale;
-    public bool grow;
-    public float growAmount;
+	public Vector3 desiredScale;
+	public Vector3 currentScale;
+	public bool grow;
+	public float growAmount;
 
-    public ScoreCenter scoree;
+	public ScoreCenter scoree;
 
-    public float maxTimer;
-    public float timer;
+	public float maxTimer;
+	public float timer;
 
-    public bool touching;
+	public bool touching;
 
 	public GameObject line;
 	public bool canFlip;
@@ -33,18 +33,18 @@ public class TestFollower : MonoBehaviour {
 	public Vector2 startPos;
 
 	public bool useParticle;
-	
+
 	void Start () {
 
-        scoree = GameObject.FindObjectOfType<ScoreCenter>();
+		scoree = GameObject.FindObjectOfType<ScoreCenter>();
 
-        timer = maxTimer;
-	
+		timer = maxTimer;
+
 		rgbd = GetComponent<Rigidbody2D> ();
 		//lastPos = transform.position;
 		startPos = transform.position;
 
-        desiredScale = transform.localScale;
+		desiredScale = transform.localScale;
 
 		line = GameObject.FindGameObjectWithTag ("Line");
 	}
@@ -74,26 +74,26 @@ public class TestFollower : MonoBehaviour {
 					} else {
 
 						if (Input.GetKey (KeyCode.W)) {
-							
+
 							rgbd.velocity = new Vector2 (speed, speed);
 						} else if (Input.GetKey (KeyCode.S)) {
-							
+
 							rgbd.velocity = new Vector2 (speed, -speed);
 						} else {
-							
+
 							rgbd.velocity = new Vector2 (speed, 0);
 						}
 					}
 				} else if (Input.GetKey (KeyCode.A)) {
-					
+
 					if (Input.GetKey (KeyCode.W)) {
-						
+
 						rgbd.velocity = new Vector2 (-speed, speed);
 					} else if (Input.GetKey (KeyCode.S)) {
-						
+
 						rgbd.velocity = new Vector2 (-speed, -speed);
 					} else {
-						
+
 						rgbd.velocity = new Vector2 (-speed, 0);
 					}
 				} else {
@@ -112,56 +112,56 @@ public class TestFollower : MonoBehaviour {
 			} else {
 
 				if (Input.GetKey (KeyCode.J) || Input.GetKey(KeyCode.LeftArrow)) {
-					
+
 					//if (transform.position.x <= otherPiece.transform.localPosition.x && !canFlip) {
 
 					if (transform.position.x <= otherPiece.transform.localPosition.x) {
-						
+
 						if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
-							
+
 							rgbd.velocity = new Vector2 (0, speed);
 						} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
-							
+
 							rgbd.velocity = new Vector2 (0, -speed);
 						} else {
-							
+
 							rgbd.velocity = Vector2.zero;
 						}
 					} else {
-						
+
 						if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
-							
+
 							rgbd.velocity = new Vector2 (-speed, speed);
 						} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
-							
+
 							rgbd.velocity = new Vector2 (-speed, -speed);
 						} else {
-							
+
 							rgbd.velocity = new Vector2 (-speed, 0);
 						}
 					}
 				} else if (Input.GetKey (KeyCode.L) || Input.GetKey(KeyCode.RightArrow)) {
-					
+
 					if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
-						
+
 						rgbd.velocity = new Vector2 (speed, speed);
 					} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
-						
+
 						rgbd.velocity = new Vector2 (speed, -speed);
 					} else {
-						
+
 						rgbd.velocity = new Vector2 (speed, 0);
 					}
 				} else {
-					
+
 					if (Input.GetKey (KeyCode.I) || Input.GetKey(KeyCode.UpArrow)) {
-						
+
 						rgbd.velocity = new Vector2 (0, speed);
 					} else if (Input.GetKey (KeyCode.K) || Input.GetKey(KeyCode.DownArrow)) {
-						
+
 						rgbd.velocity = new Vector2 (0, -speed);
 					} else {
-						
+
 						rgbd.velocity = new Vector2 (0, 0);
 					}
 				}
@@ -171,45 +171,45 @@ public class TestFollower : MonoBehaviour {
 		} else {
 
 			if (isLeft) {
-				
-				if (Input.GetAxis ("JoystickLeftX") > 0) {
-					
+
+				if (Input.GetAxis ("Joystick2LeftX") > 0) {
+
 					//if (transform.position.x >= otherPiece.transform.position.x && !canFlip) {
 
 					if (transform.position.x >= otherPiece.transform.position.x) {
-						
-						rgbd.velocity = new Vector2 (0, Input.GetAxis ("JoystickLeftY") * speed);
+
+						rgbd.velocity = new Vector2 (0, Input.GetAxis ("Joystick2LeftY") * speed);
 					} else {
-						
-						rgbd.velocity = new Vector2 (Input.GetAxis ("JoystickLeftX") * speed, Input.GetAxis ("JoystickLeftY") * speed);
+
+						rgbd.velocity = new Vector2 (Input.GetAxis ("Joystick2LeftX") * speed, Input.GetAxis ("Joystick2LeftY") * speed);
 					}
 				} else {
-					
-					rgbd.velocity = new Vector2 (Input.GetAxis ("JoystickLeftX") * speed, Input.GetAxis ("JoystickLeftY") * speed);
+
+					rgbd.velocity = new Vector2 (Input.GetAxis ("Joystick2LeftX") * speed, Input.GetAxis ("Joystick2LeftY") * speed);
 				}
 			}
-			
+
 			if (!isLeft) {
-				
-				if (Input.GetAxis ("JoystickRightX") < 0) {
-					
+
+				if (Input.GetAxis ("Joystick2RightX") < 0) {
+
 					//if (transform.position.x <= otherPiece.transform.position.x && !canFlip) {
 
 					if (transform.position.x <= otherPiece.transform.position.x) {
-						
-						rgbd.velocity = new Vector2 (0, Input.GetAxis ("JoystickRightY") * speed);
+
+						rgbd.velocity = new Vector2 (0, Input.GetAxis ("Joystick2RightY") * speed);
 					} else {
-						
-						rgbd.velocity = new Vector2 (Input.GetAxis ("JoystickRightX") * speed, Input.GetAxis ("JoystickRightY") * speed);
+
+						rgbd.velocity = new Vector2 (Input.GetAxis ("Joystick2RightX") * speed, Input.GetAxis ("Joystick2RightY") * speed);
 					}
 				} else {
-					
-					rgbd.velocity = new Vector2 (Input.GetAxis ("JoystickRightX") * speed, Input.GetAxis ("JoystickRightY") * speed);
+
+					rgbd.velocity = new Vector2 (Input.GetAxis ("Joystick2RightX") * speed, Input.GetAxis ("Joystick2RightY") * speed);
 				}
 			}
 		}
-		
-		
+
+
 
 	}
 
@@ -221,116 +221,132 @@ public class TestFollower : MonoBehaviour {
 		//lastPos = transform.position;
 	}
 
-    public void IncreaseScale()
-    {
-        grow = true;
+	public void IncreaseScale()
+	{
 
-        desiredScale = new Vector3(desiredScale.x + .6f, desiredScale.y + .6f, 1);
-        //Debug.Log("GROWNIGGA!!!!");
-    }
+
+		grow = true;
+
+		desiredScale = new Vector3(desiredScale.x + .6f, desiredScale.y + .6f, 1);
+		//Debug.Log("GROWNIGGA!!!!");
+	}
 
 	void LateUpdate(){
 
 		transform.position = new Vector3 (transform.position.x, transform.position.y, 10);
 
-		if (transform.position.x < -11.25) {
+		if (transform.position.x < -10.58f) {
 
-			transform.position = new Vector3(-11.25f, transform.position.y, 10);
+			transform.position = new Vector3(-10.58f, transform.position.y, 10);
 		}
 		if (transform.position.y < -4.21f) {
-
+			
 			transform.position = new Vector3(transform.position.x, -4.21f, 10);
 		}
-		if (transform.position.x > 11.25f) {
-
-			transform.position = new Vector3(11.25f, transform.position.y, 10);
+		if (transform.position.x > 10.51f) {
+			
+			transform.position = new Vector3(10.51f, transform.position.y, 10);
 		}
 		if (transform.position.y > 10.65f) {
-
+			
 			transform.position = new Vector3(transform.position.x, 10.65f, 10);
 		}
 	}
 
-    public void OnCollisionEnter(Collision other)
-    {
+	public void OnCollisionEnter(Collision other)
+	{
 
-        if (other.gameObject.tag == "Follower")
-        {
+		if (other.gameObject.tag == "Follower")
+		{
 
-            touching = true;
+			touching = true;
 
-           
-        }
-    }
+			/* GameObject[] growParticle = GameObject.FindGameObjectsWithTag("Doo");
 
-    public void OnCollisionExit(Collision other)
-    {
-
-        if (other.gameObject.tag == "Follower")
-        {
-
-            touching = false;
-        }
-    }
-
-	void Update () {
-
-        // currentScale = transform.localScale;
-
-        speed = 7 + ((float) scoree.multiplier / 8);
-
-        if (grow)
-        {
-			grow = false;
-			transform.localScale = desiredScale;
-            /*if (touching)
+            foreach (GameObject grop in growParticle)
             {
 
-                timer -= Time.timeScale;
-
-                transform.localScale += new Vector3(growAmount, 0, 0);
-                transform.localScale += new Vector3(0, growAmount, 0);
-            }
-            else
-            {
-
-                transform.localScale += new Vector3(growAmount * 10, 0, 0);
-                transform.localScale += new Vector3(0, growAmount * 10, 0);
-            }
-
-            if (timer <= 0)
-            {
-                Time.timeScale = 1;
-                timer = maxTimer;
-                grow = false;
-                transform.localScale = desiredScale;
+                 grop.GetComponent<ScaleToParent>().DooParticle();
             }*/
 
 
-        }
 
-		
+			//Debug.Log("Hit Eachother!");
+		}
+	}
+
+	public void OnCollisionExit(Collision other)
+	{
+
+		if (other.gameObject.tag == "Follower")
+		{
+
+			touching = false;
+		}
+	}
+
+	void Update () {
+
+		// currentScale = transform.localScale;
+
+		speed = 7 + ((float) scoree.multiplier / 8);
+
+		if (grow)
+		{
+
+			/*if (touching)
+			{
+
+				timer -= Time.timeScale;
+
+				//Time.timeScale = .3f;
+
+				transform.localScale += new Vector3(growAmount, 0, 0);
+				transform.localScale += new Vector3(0, growAmount, 0);
+			}
+			else
+			{
+
+				transform.localScale += new Vector3(growAmount * 10, 0, 0);
+				transform.localScale += new Vector3(0, growAmount * 10, 0);
+			}
+
+			if (timer <= 0)
+			{
+				Time.timeScale = 1;
+				timer = maxTimer;
+				grow = false;
+				transform.localScale = desiredScale;
+			}*/
+
+			grow = false;
+			transform.localScale = desiredScale;
+
+
+		}
+
+
 
 		if (Input.GetKeyDown (KeyCode.LeftControl)) {
 
 			isWASD = !isWASD;
 		}
 
-		
+
 
 		if (isLeft) {
 
-			if (Input.GetAxis ("JoystickLeftY") == 0 && Input.GetAxis ("JoystickLeftX") == 0) {
-				
+			if (Input.GetAxis ("Joystick2LeftY") == 0 && Input.GetAxis ("Joystick2LeftX") == 0) {
+
 				useParticle = false;
 			}else useParticle = true;
 		} else {
 
-			if (Input.GetAxis ("JoystickRightY") == 0 && Input.GetAxis ("JoystickRightX") == 0) {
-				
+			if (Input.GetAxis ("Joystick2RightY") == 0 && Input.GetAxis ("Joystick2RightX") == 0) {
+
 				useParticle = false;
 			}else useParticle = true;
 		}
-       //gameObject.tag == "Doo"
+		//gameObject.tag == "Doo"
 	}
 }

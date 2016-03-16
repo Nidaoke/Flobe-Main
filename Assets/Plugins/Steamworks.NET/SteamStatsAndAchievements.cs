@@ -275,7 +275,7 @@ public class SteamStatsAndAchievements : MonoBehaviour
                     }
                     break;
                 case Achievement.ACH_50_MULTIPLIER:
-                    if (Multiplier >= 50)
+                    if (Multiplier >= 30)
                     {
                         UnlockAchievement(achievement);
                     }

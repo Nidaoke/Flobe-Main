@@ -7,6 +7,19 @@ public class StartInstructionsFade : MonoBehaviour
 	[SerializeField] private float mFadeDuration = 1f;
 	[SerializeField] private SpriteRenderer mSpriteRenderer;
 
+	Vector3 oldPosition;
+
+	void Start(){
+
+		oldPosition = transform.position;
+	}
+
+	void Reset(){
+
+		transform.position = oldPosition;
+		mSpriteRenderer.material.color = new Color (1, 1, 1, 1);
+		GetComponent<Rigidbody> ().useGravity = false;
+	}
 
 	//This is called by the GameControler script's GameBegin() function ~Adam
 	public void StartFade()
@@ -36,5 +49,8 @@ public class StartInstructionsFade : MonoBehaviour
            // Debug.Log(mSpriteRenderer.material.color.a);
 			yield return null;
 		}
+
+		yield return new WaitForSeconds (5);
+		Reset ();
 	}//END of FadeOutInstructions()
 }

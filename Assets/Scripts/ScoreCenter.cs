@@ -19,8 +19,7 @@ public class ScoreCenter : MonoBehaviour
 	public float period;
 	public Animator scoreAnim;
 
-	public GameObject rightObject;
-	public GameObject leftObject;
+	public GameObject rightObject, leftObject, leftObject2, rightObject2;
 
 	bool lerping;
 	float multTimer = 2f;
@@ -146,8 +145,6 @@ public class ScoreCenter : MonoBehaviour
         score = 0;
         this.enabled = false;
 		gameObject.SetActive(false);
-
-
 	}
 	
 	void Additions ()
@@ -172,6 +169,15 @@ public class ScoreCenter : MonoBehaviour
 
         //leftObject.transform.localScale = new Vector3 (leftObject.transform.localScale.x + .4f, leftObject.transform.localScale.y + .4f, 1);
         //rightObject.transform.localScale = new Vector3 (rightObject.transform.localScale.x + .4f, rightObject.transform.localScale.y + .4f, 1);
+
+		if (leftObject2.activeSelf) {
+
+			leftObject2.GetComponent<TestFollower2> ().IncreaseScale ();
+		}
+		if (rightObject2.activeSelf) {
+
+			rightObject2.GetComponent<TestFollower2> ().IncreaseScale ();
+		}
 
         leftObject.GetComponent<TestFollower>().IncreaseScale();
         rightObject.GetComponent<TestFollower>().IncreaseScale();

@@ -4,6 +4,11 @@ using Steamworks;
 
 public class Line : MonoBehaviour 
 {
+	#region variables
+
+	public bool twoPlayer;
+	public bool player1;
+
     public float purpBlueTimer;
     public float maxPurpBlueTimer;
 
@@ -42,6 +47,8 @@ public class Line : MonoBehaviour
 
 	public bool decreaseTimer;
 
+	#endregion 
+
 	public void Start(){
 
 		maxTimer = timer;
@@ -60,6 +67,8 @@ public class Line : MonoBehaviour
 	}
 
 	public void Update(){
+
+		//Time.timeScale = 0;
 
         if (purpBlueTimer > 0)
         {
@@ -89,71 +98,61 @@ public class Line : MonoBehaviour
             GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_SURVIVOR, "ACH_SURVIVOR", "a"));
         }
 
-		//if (Input.GetKeyDown (KeyCode.Tab)) {
-
-		//	hitMultiplier = true;
-		//}
-
 		rightTrigger = Input.GetAxis ("JoystickRightTrigger");
 
-	//	if (Input.GetAxis ("JoystickRightTrigger")) {
+		if (scoreScr.GetComponent<ScoreCenter> ().multiplier >= 10 && !hitMultiplier) {
 
-			//Debug.Log(Input.GetAxis("JoystickRightTrigger"));
-	//	}
+			if (!twoPlayer) {
+				if (purpleFill.GetComponent<ParticleSystem>().isPlaying == false)
+				{
 
-		if (scoreScr.GetComponent<ScoreCenter> ().multiplier >= 15 && !hitMultiplier) {
+					purpleFill.GetComponent<ParticleSystem>().Play();
+				}
 
-            if (purpleFill.GetComponent<ParticleSystem>().isPlaying == false)
-            {
-
-                purpleFill.GetComponent<ParticleSystem>().Play();
-            }
-
-			hitMultiplier = true;
-			Debug.Log("DO GLOW THINGY!");
+				hitMultiplier = true;
+			}
+		
+			//Debug.Log("DO GLOW THINGY!");
             GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_DOUBLE_TROUBLE, "ACH_DOUBLE_TROUBLE", "a"));
            // GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements> ().UnlockAchievement(GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements> ().)
         }
 
-		if (hitMultiplier) {
+		if (!twoPlayer) {
+			if (hitMultiplier) {
 
-			if(!glow1.activeSelf){
+				if(!glow1.activeSelf){
 
-				glow1.SetActive(true);
-				glow2.SetActive(true);
-			}
+					glow1.SetActive(true);
+					glow2.SetActive(true);
+				}
 
-			if(!purple2.activeSelf)
-				purple.SetActive (true);
-		} else {
+				if(!purple2.activeSelf)
+					purple.SetActive (true);
+			} else {
 
-			glow1.SetActive(false);
-			glow2.SetActive (false);
-
-			purple.SetActive(false);
-			purple2.SetActive(false);
-		}
-
-		/*if (Input.GetKey (KeyCode.Joystick1Button5)) {
-
-			Debug.Log ("FUKCH!");
-		}*/
-
-		if (purple.activeSelf) {
-
-			//if (Input.GetKeyDown (KeyCode.Joystick1Button5)) {
-
-			if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.LeftShift)){
+				glow1.SetActive(false);
+				glow2.SetActive (false);
 
 				purple.SetActive(false);
-				purple2.SetActive(true);
-			}
-		} else if (purple2.activeSelf) {
-
-			if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.LeftShift)){
-				
-				purple.SetActive(true);
 				purple2.SetActive(false);
+			}
+
+			if (purple.activeSelf) {
+
+				//if (Input.GetKeyDown (KeyCode.Joystick1Button5)) {
+
+				if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.LeftShift)){
+
+					purple.SetActive(false);
+					purple2.SetActive(true);
+				}
+			} else if (purple2.activeSelf) {
+
+				if((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown(KeyCode.LeftShift)){
+
+					purple.SetActive(true);
+					purple2.SetActive(false);
+				}
 			}
 		}
 
@@ -188,13 +187,6 @@ public class Line : MonoBehaviour
 			//GameController.instance.SendMessage("Pause");
 	}
 
-	void OnCollisionEnter2D(Collision2D col)
-	{
-		//if(GameController.instance.gameOver)
-		//	return;
-		//CheckHit(col.gameObject, col.contacts[0].point);
-	}
-
 	void OnTriggerStay2D(Collider2D obj){
 
         if (GameController.instance.gameOver)
@@ -214,72 +206,29 @@ public class Line : MonoBehaviour
 	void CheckHit(GameObject obj, Vector3 point, Collider2D coll)
 	{
 
-
 		if (obj.layer == 9) {
 
 			if (hitMultiplier) {
 				
 				if(Vector2.Distance(obj.transform.position, pieces[0].position) < Vector2.Distance(obj.transform.position, pieces[1].position)){
-					
-					//Debug.Log("Hit Right Side!!!!");
 
 					if(purple.activeSelf){
 
 						if(obj.tag == "Purple"){
 							
-							//GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
-							Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
-
-                            //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
-
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().PurplesCollected++;
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
-
-                            hitAPurp = true;
-                            purpBlueTimer = 20f;
-
-                            scoreScr.AddScore ();
-							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
-							obj.SendMessage ("DestroyBall");
+							HitPurpleGood (obj);
 						}else if(obj.tag == "Ball"){
 							
-							audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
-							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
-							//			p.
-							GameController.instance.StartCoroutine ("EndGame");
-                            GetComponent<Line>().enabled = false;
+							HitBad ();
                         }
 					}else if(purple2.activeSelf){
 
 						if(obj.tag == "Ball"){
 
-                            //GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
-
-                            if (obj.GetComponent<Bomb>() == null)
-                            {
-
-                                Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
-                            }
-
-                            //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
-
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
-
-                            hitABlue = true;
-                            purpBlueTimer = 20f;
-
-
-                            scoreScr.AddScore ();
-							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
-							obj.SendMessage ("DestroyBall");
+							HitBlueGood (obj);
 						}else if(obj.tag == "Purple"){
 							
-							audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
-							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
-							//			p.
-							GameController.instance.StartCoroutine ("EndGame");
-                            GetComponent<Line>().enabled = false;
+							HitBad ();
                         }
 					}
 				}else{
@@ -288,88 +237,25 @@ public class Line : MonoBehaviour
 
 						if(obj.tag == "Ball"){
 
-                            if (obj.GetComponent<Bomb>() == null)
-                            {
-
-                                Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
-                            }
-
-                            //GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
-
-
-                            //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
-
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
-
-                            hitABlue = true;
-                            purpBlueTimer = 20f;
-
-                            scoreScr.AddScore ();
-							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
-							obj.SendMessage ("DestroyBall");
+							HitBlueGood (obj);
 						}else if(obj.tag == "Purple"){
 							
-							audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
-							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
-							//			p.
-							GameController.instance.StartCoroutine ("EndGame");
-                            GetComponent<Line>().enabled = false;
+							HitBad ();
                         }
 					}else if(purple2.activeSelf){
 
 						if(obj.tag == "Purple"){
 
-                            //GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
-
-                            if (obj.GetComponent<Bomb>() == null)
-                            {
-
-                                Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
-                            }
-
-                            //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
-
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().PurplesCollected++;
-                            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
-
-                            hitAPurp = true;
-                            purpBlueTimer = 20f;
-
-                            scoreScr.AddScore ();
-							//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
-							obj.SendMessage ("DestroyBall");
+							HitPurpleGood (obj);
 						}else if(obj.tag == "Ball"){
 							
-							audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
-							//			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
-							//			p.
-							GameController.instance.StartCoroutine ("EndGame");
-                            GetComponent<Line>().enabled = false;
+							HitBad ();
                         }
 					}
 				}
 			} else {
 
-                //GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
-
-                if (obj.GetComponent<Bomb>() == null)
-                {
-
-                    Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
-                }
-
-                //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
-
-                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
-                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
-
-                hitABlue = true;
-                purpBlueTimer = 20f;
-
-                scoreScr.AddScore ();
-				//Destroy (Instantiate (collectSplat, obj.transform.position, transform.rotation), 0.5f);
-				obj.SendMessage ("DestroyBall");
+				HitBlueGood (obj);
 			}		
 
 
@@ -378,83 +264,62 @@ public class Line : MonoBehaviour
 		} else if (obj.layer == 10) {
 
 			if(obj.gameObject.GetComponent<Ball> () != null){
-
 				if(obj.gameObject.GetComponent<Ball> ().pop != null){
-
-                    //GameObject popper = obj.gameObject.GetComponent<Ball> ().pop;
                     if (obj.GetComponent<Bomb>() == null)
                     {
-
                         Destroy(Instantiate(bluePop, obj.transform.position, Quaternion.identity), 1);
                     }
-
-                    //obj.gameObject.GetComponent<Ball> ().pop.SetActive(true);
                 }
-
 			}
-
             if (obj.gameObject.GetComponent<Bomb>() != null)
             {
-
-                //if(coll.radius == 7)
-
                 CircleCollider2D[] cirCols = obj.GetComponents<CircleCollider2D>();
                 foreach (CircleCollider2D cirCol2D in cirCols)
                 {
-
-                    //if (cirCol2D.isTrigger)
-                    //{
-                    //
-                    // Debug.Log("HI!");
-                    //}
-
                     if (coll.isTrigger)
                     {
-
-
                     }
                     else
                     {
-
-                        //  obj.gameObject.GetComponent<SpriteRenderer>().sprite = null;
-                        //  obj.gameObject.GetComponent<Animator>().enabled = false;
-
-                        audioS.PlayOneShot(failSounds[Random.Range(0, failSounds.Length - 1)]);
-                        //			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
-                        //			p.
-                        GameController.instance.StartCoroutine("EndGame");
-                        GetComponent<Line>().enabled = false;
+						HitBad ();
                     }
                 }
-
                 obj.gameObject.GetComponent<Bomb>().warning.SetActive(false);
-             
             }
             else
             {
 
-                audioS.PlayOneShot(failSounds[Random.Range(0, failSounds.Length - 1)]);
-                //			GameObject p = Instantiate(hitEffect,point,Quaternion.identity) as GameObject;
-                //			p.
-                GameController.instance.StartCoroutine("EndGame");
-                GetComponent<Line>().enabled = false;
+				HitBad ();
             }
-
-		//	if(obj.gameObject.GetComponent<Bomb>() != null){
-
-				//decreaseTimer = true;
-				//obj.gameObject.GetComponent<Bomb> ().Boom();
-
-			//}else{
-
-			
-		//	}
-		
 		}
-		else{
-			Debug.Log(obj.name);
+	}
 
-			Debug.Log(obj.layer);
+	void HitPurpleGood(GameObject objJ){
+		Destroy(Instantiate(bluePop, objJ.transform.position, Quaternion.identity), 1);
+		GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().PurplesCollected++;
+		GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+		hitAPurp = true;
+		purpBlueTimer = 20f;
+		scoreScr.AddScore ();
+		objJ.SendMessage ("DestroyBall");
+	}
+
+	void HitBlueGood(GameObject objJ){
+		if (objJ.GetComponent<Bomb>() == null)
+		{
+			Destroy(Instantiate(bluePop, objJ.transform.position, Quaternion.identity), 1);
 		}
+		GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
+		GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+		hitABlue = true;
+		purpBlueTimer = 20f;
+		scoreScr.AddScore ();
+		objJ.SendMessage ("DestroyBall");
+	}
+
+	void HitBad(){
+		audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
+		GameController.instance.StartCoroutine ("EndGame");
+		GetComponent<Line>().enabled = false;
 	}
 }

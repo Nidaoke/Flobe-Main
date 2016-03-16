@@ -8,9 +8,16 @@ public class Ball : MonoBehaviour
 	protected bool missed;
 	protected Vector3 dir;
 
+	public float oldSpeed;
+
     public bool isBottomSeeker = false;
 
 	public GameObject pop;
+
+	void Start(){
+
+		oldSpeed = moveSpeed;
+	}
 
 	void Awake() 
 	{
@@ -21,8 +28,6 @@ public class Ball : MonoBehaviour
 	void Update(){
 
 		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-
-
 
 		transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
@@ -36,6 +41,32 @@ public class Ball : MonoBehaviour
 		else
 			StartCoroutine(Move());
 //		Debug.Log(gameObject.name+" "+on);
+	}
+
+	public void Freeze(){
+		float tParam = 0;
+		float speedy = .7f;
+
+		if (tParam < 1) {
+
+			tParam += Time.deltaTime * speedy;
+			moveSpeed = Mathf.Lerp (moveSpeed, 0, tParam);
+		}
+
+		//moveSpeed = 0;
+		//moveSpeed = Mathf.Lerp(moveSpeed, 0, Time.time);
+	}
+
+	public void UnFreeze(){
+
+		float tParam = 0;
+		float speedy = .7f;
+
+		if (tParam < 1) {
+
+			tParam += Time.deltaTime * speedy;
+			moveSpeed = Mathf.Lerp (moveSpeed, oldSpeed, tParam);
+		}
 	}
 	
 	IEnumerator Move()

@@ -27,7 +27,7 @@ public class GlowStuff : MonoBehaviour {
 
 				lightEffect.intensity += amount;
 
-				Time.timeScale = .5f;
+				GameObject.FindGameObjectWithTag ("Freezer").GetComponent<FreezeAllEnemies> ().BeginFreeze ();
 
 			} else if (goDown) {
 
