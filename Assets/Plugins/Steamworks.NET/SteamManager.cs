@@ -16,6 +16,8 @@ using Steamworks;
 [DisallowMultipleComponent]
 class SteamManager : MonoBehaviour
 {
+
+	public bool dontOpenSteam;
     private static SteamManager s_instance;
     private static SteamManager Instance
     {
@@ -80,18 +82,24 @@ class SteamManager : MonoBehaviour
             // Once you get a Steam AppID assigned by Valve, you need to replace AppId_t.Invalid with it and
             // remove steam_appid.txt from the game depot. eg: "(AppId_t)480" or "new AppId_t(480)".
             // See the Valve documentation for more information: https://partner.steamgames.com/documentation/drm#FAQ
-            if (SteamAPI.RestartAppIfNecessary(new AppId_t(434530)))
-            {
-                Application.Quit();
-                return;
-            }
+
+			if(!dontOpenSteam){
+
+				if (SteamAPI.RestartAppIfNecessary(new AppId_t(434530)))
+				{
+					Application.Quit();
+					return;
+				}
+			}
         }
         catch (System.DllNotFoundException e)
         { // We catch this exception here, as it will be the first occurence of it.
             Debug.LogError("[Steamworks.NET] Could not load [lib]steam_api.dll/so/dylib. It's likely not in the correct location. Refer to the README for more details.\n" + e, this);
 
-            Application.Quit();
-            return;
+			if (!dontOpenSteam) {
+				Application.Quit();
+				return;
+			}
         }
 
         // Initialize the SteamAPI, if Init() returns false this can happen for many reasons.

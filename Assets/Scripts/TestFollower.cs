@@ -3,6 +3,8 @@ using System.Collections;
 
 public class TestFollower : MonoBehaviour {
 
+	public GameObject holder1, holder2;
+
     public Vector3 desiredScale;
     public Vector3 currentScale;
     public bool grow;
@@ -233,17 +235,17 @@ public class TestFollower : MonoBehaviour {
 
 		transform.position = new Vector3 (transform.position.x, transform.position.y, 10);
 
-		if (transform.position.x < -11.25) {
+		if (transform.position.x < holder1.transform.position.x + .35f) {
 
-			transform.position = new Vector3(-11.25f, transform.position.y, 10);
+			transform.position = new Vector3(holder1.transform.position.x + .35f, transform.position.y, 10);
 		}
 		if (transform.position.y < -4.21f) {
 
 			transform.position = new Vector3(transform.position.x, -4.21f, 10);
 		}
-		if (transform.position.x > 11.25f) {
+		if (transform.position.x > holder2.transform.position.x - .35f) {
 
-			transform.position = new Vector3(11.25f, transform.position.y, 10);
+			transform.position = new Vector3(holder2.transform.position.x - .35f, transform.position.y, 10);
 		}
 		if (transform.position.y > 10.65f) {
 

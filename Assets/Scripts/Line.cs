@@ -302,6 +302,10 @@ public class Line : MonoBehaviour
 		purpBlueTimer = 20f;
 		scoreScr.AddScore ();
 		objJ.SendMessage ("DestroyBall");
+
+		GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
+		GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
+		sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddPurpleEnemy ();
 	}
 
 	void HitBlueGood(GameObject objJ){
@@ -315,6 +319,10 @@ public class Line : MonoBehaviour
 		purpBlueTimer = 20f;
 		scoreScr.AddScore ();
 		objJ.SendMessage ("DestroyBall");
+
+		GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
+		GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
+		sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddBlueEnemy ();
 	}
 
 	void HitBad(){
