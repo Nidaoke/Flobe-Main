@@ -417,13 +417,13 @@ public class SteamStatsAndAchievements : MonoBehaviour
         {
             if (EResult.k_EResultOK == pCallback.m_eResult)
             {
-                Debug.Log("StoreStats - success");
+//                Debug.Log("StoreStats - success");
             }
             else if (EResult.k_EResultInvalidParam == pCallback.m_eResult)
             {
                 // One or more stats we set broke a constraint. They've been reverted,
                 // and we should re-iterate the values now to keep in sync.
-                Debug.Log("StoreStats - some failed to validate");
+               // Debug.Log("StoreStats - some failed to validate");
                 // Fake up a callback here so that we re-load the values.
                 //UserStatsReceived_t callback = new UserStatsReceived_t();
                 //callback.m_eResult = EResult.k_EResultOK;
@@ -431,7 +431,7 @@ public class SteamStatsAndAchievements : MonoBehaviour
                 //OnUserStatsReceived(callback);
             }
             else {
-                Debug.Log("StoreStats - failed, " + pCallback.m_eResult);
+               // Debug.Log("StoreStats - failed, " + pCallback.m_eResult);
             }
         }
     }

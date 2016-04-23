@@ -3,7 +3,9 @@ using System.Collections;
 
 public class Spawner : MonoBehaviour 
 {
-	public GameObject ball, hazard, homing, bomb, purple;
+	bool stopSpawningPurple, stopSpawningBlue;
+
+	public GameObject ball, hazard, homing, bomb, purple, orange;
 	public ScoreCenter scoreScr;
 	public float rate, spawnRateScale, ballSpeedScale, hazardChance, homingChance;
 	public int spacing = 15, multiLevel = 1, multiLevel2 = 1;
@@ -15,8 +17,61 @@ public class Spawner : MonoBehaviour
 	public bool hitMulti;
 	public bool hitMulti2;
 	public bool hitMulti3;
+	public bool hitMulti4;
+	public bool hitMulti4_2;
 
 	public float randBomb;
+
+	public IEnumerator SpawnBlue(){
+
+		yield return new WaitForSeconds (Random.value * 20);
+
+		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
+		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
+
+		GameObject b = Instantiate (ball, transform.position, Quaternion.identity) as GameObject;
+
+		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
+
+		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
+
+		//b.GetComponent<Ball> ().approachEffect = null;
+		//b.GetComponent<Ball> ().particle.SetActive (false);
+	}
+
+	public IEnumerator SpawnPurple(){
+
+		yield return new WaitForSeconds (Random.value * 20);
+
+		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
+		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
+
+		GameObject b = Instantiate(purple,transform.position,Quaternion.identity) as GameObject;		//create the ball that was resolved to be spawned
+
+		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
+
+		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
+
+		//b.GetComponent<Ball> ().approachEffect = null;
+		//b.GetComponent<Ball> ().particle.SetActive (false);
+	}
+
+	public IEnumerator SpawnOrange(){
+
+		yield return new WaitForSeconds (Random.value * 20);
+
+		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
+		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
+
+		GameObject b = Instantiate(orange,transform.position,Quaternion.identity) as GameObject;		//create the ball that was resolved to be spawned
+
+		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
+
+		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
+
+		//b.GetComponent<Ball> ().approachEffect = null;
+		//b.GetComponent<Ball> ().particle.SetActive (false);
+	}
 
 	public void Update(){
 
@@ -47,6 +102,37 @@ public class Spawner : MonoBehaviour
 				scoreScr.spawnScr.multiLevel /= 3;
 			}
 		}
+
+		if (!hitMulti4) {
+
+			if(GameController.instance.scoreScr.multiplier >= 20){
+
+				hitMulti4 = true;
+				scoreScr.spawnScr.multiLevel /= 3;
+			}
+		}
+
+		if (!hitMulti4_2) {
+
+			if(GameController.instance.scoreScr.multiplier >= 10){
+
+				if ((GameController.instance.scoreScr.multiplier >= 10 || GameController.instance.scoreScr.multiplier2 >= 10)) {
+
+					hitMulti4_2 = true;
+				}
+			}
+		}
+	}
+
+	public void StopSpawning(string colorToStop){
+
+		if (colorToStop == "Purple") {
+
+			stopSpawningPurple = true;
+		} else if (colorToStop == "Blue") {
+
+			stopSpawningBlue = true;
+		}
 	}
 	
 	IEnumerator Spawn() 
@@ -67,8 +153,63 @@ public class Spawner : MonoBehaviour
 					spawn = purple;
 			}
 
+			if(hitMulti4){
+
+				float val = Random.value;
+
+				if (val < .333f)
+					spawn = ball;
+				else if (val < .666f)
+					spawn = purple;
+				else
+					spawn = orange;
+			}
+
+			if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer) {
+
+				if(Random.value < .5)
+					spawn = ball;
+				else
+					spawn = purple;
+
+				if (stopSpawningBlue)
+					spawn = purple;
+				if (stopSpawningPurple)
+					spawn = ball;
+			}
+
+			if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer && (hitMulti4_2)) {
+
+				float val = Random.value;
+
+				if (val < .333f)
+					spawn = ball;
+				else if (val < .666f)
+					spawn = purple;
+				else
+					spawn = orange;
+
+				if (stopSpawningBlue) {
+
+					val = Random.value;
+					if (val < .5f)
+						spawn = purple;
+					else
+						spawn = orange;
+				}
+
+				if (stopSpawningPurple) {
+
+					val = Random.value;
+					if (val < .5f)
+						spawn = ball;
+					else
+						spawn = orange;
+				}
+			}
+
 															//creates an object, sets it to ball by default
-			float cooldown = rate-scoreScr.multiplier/spawnRateScale;				//creates spawn cooldown, sets to default value
+			float cooldown = rate-scoreScr.pseudoMultiplier/spawnRateScale;				//creates spawn cooldown, sets to default value
 		
 
 
@@ -111,13 +252,15 @@ public class Spawner : MonoBehaviour
 				
 				GameObject b = Instantiate(spawn,transform.position,Quaternion.identity) as GameObject;		//create the ball that was resolved to be spawned
 
-				if(b.GetComponent<Collectable> () != null){
+				//if(b.GetComponent<Collectable> () != null){
 
-					b.GetComponent<Ball>().moveSpeed += multiLevel2/ballSpeedScale;
-				}else{
+					//b.GetComponent<Ball>().moveSpeed += multiLevel2/ballSpeedScale;
+				//}else{
 
-					b.GetComponent<Ball>().moveSpeed += multiLevel/ballSpeedScale;
-				}
+					//b.GetComponent<Ball>().moveSpeed += multiLevel/ballSpeedScale;
+				//}
+
+				b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
 
 				b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
 

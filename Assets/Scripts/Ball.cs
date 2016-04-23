@@ -8,6 +8,8 @@ public class Ball : MonoBehaviour
 	protected bool missed;
 	public Vector3 dir;
 
+	public GameObject particle;
+
 	public bool reversed;
 
 	public float oldSpeed;
@@ -27,13 +29,12 @@ public class Ball : MonoBehaviour
 		StartCoroutine(Move());
 	}
 
-	void OnCollisionEnter2D(Collision2D other){
+	void OnTriggerEnter2D(Collider2D other){
 		if (other.gameObject.tag == "Explosion") {
 			if (!reversed) {
 				reversed = true;
 				ReverseDirection();
 			}
-
 		}
 	}
 
@@ -45,9 +46,9 @@ public class Ball : MonoBehaviour
 
 		transform.rotation *= Quaternion.Euler (0, 0, 90);
 
-		if (Input.GetKeyDown (KeyCode.U)) {
-			ReverseDirection ();
-		}
+		//if (Input.GetKeyDown (KeyCode.U)) {
+		//	ReverseDirection ();
+		//}
 	}
 
 	public virtual void ReverseDirection(){
@@ -64,6 +65,9 @@ public class Ball : MonoBehaviour
 	}
 
 	public void Freeze(){
+
+		//Debug.Log ("Freeze got initiated!");
+
 		float tParam = 0;
 		float speedy = .7f;
 
@@ -78,6 +82,8 @@ public class Ball : MonoBehaviour
 	}
 
 	public void UnFreeze(){
+
+		//Debug.Log ("Freeze got unitiated!");
 
 		float tParam = 0;
 		float speedy = .7f;
@@ -137,9 +143,14 @@ public class Ball : MonoBehaviour
 			{
 				if(hit.collider.gameObject.layer == 13)
 				{
-					GameObject ae = Instantiate(approachEffect,hit.point,Quaternion.identity) as GameObject;
-					ae.transform.right = dir;
-					Destroy(ae,1f);
+					if (approachEffect != null) {
+
+						GameObject ae = Instantiate(approachEffect,hit.point,Quaternion.identity) as GameObject;
+						ae.transform.right = dir;
+						Destroy(ae,1f);
+					}
+
+
 					yield break;
 				}
 			}

@@ -27,7 +27,7 @@ public class FreezeAllEnemies : MonoBehaviour {
 	void ActivateFreeze(){
 
 		foreach (Ball b in enemies) {
-
+			//Debug.Log ("Called Freeze");
 			b.Freeze ();
 		}
 

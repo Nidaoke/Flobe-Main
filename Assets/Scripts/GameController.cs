@@ -11,6 +11,10 @@ public class GameController : MonoBehaviour
 {
 	#region variables
 
+	public GameObject playerClicker;
+
+	public bool gameHasBegun;
+
 	public static GameController instance;									//gamecontroller script reference for all other scripts
 	public BGEffects bgScr;
 	public Spawner spawnScr;
@@ -104,13 +108,35 @@ public class GameController : MonoBehaviour
 		animationsReady = true;
 	}
 
+	public void DoThisToBegin(bool wasd){
+
+		if (wasd) {
+
+			GameObject[] followers = GameObject.FindGameObjectsWithTag ("Follower");
+			foreach (GameObject follower in followers) {
+
+				follower.GetComponent<TestFollower> ().isWASD = true;
+			}
+			GameBegin ();
+		} else {
+
+			GameObject[] followers = GameObject.FindGameObjectsWithTag("Follower");
+			foreach (GameObject follower in followers)
+			{
+
+				follower.GetComponent<TestFollower>().isWASD = false;
+			}
+			GameBegin();
+		}
+	}
+
 	void Update(){
 
-		if (!preGame && !gameOver) {
+		if (!preGame && gameHasBegun && !gameOver) {
 
             //Debug.Log("KEK!");
 			
-			if(Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button7)){
+			if(Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown(KeyCode.Joystick1Button7) || Input.GetKeyDown(KeyCode.Joystick2Button7)){
 
                 //Debug.Log(Time.timeScale);
 
@@ -127,12 +153,25 @@ public class GameController : MonoBehaviour
             }
 		}
 
+		if (Input.GetKeyUp (KeyCode.Space) || Input.GetKeyUp (KeyCode.Joystick1Button7)) {
+
+			gameHasBegun = true;
+		}
+
 		if (preGame) 
 		{
 
-			
+			if (Input.GetKeyDown (KeyCode.Space)) {
 
-			if ( (Application.platform != RuntimePlatform.LinuxPlayer && Input.GetKeyDown(KeyCode.Space)) ||
+				playerClicker.SetActive (true);
+			}
+
+			if (Input.GetKeyDown (KeyCode.JoystickButton7) || Input.GetKeyDown(KeyCode.Joystick2Button7)) {
+
+				playerClicker.SetActive (true);
+			}
+
+			/*if ( (Application.platform != RuntimePlatform.LinuxPlayer && Input.GetKeyDown(KeyCode.Space)) ||
 				(Application.platform == RuntimePlatform.LinuxPlayer && Input.GetKeyDown(KeyCode.F)) )
             {
                 GameObject[] followers = GameObject.FindGameObjectsWithTag("Follower");
@@ -152,10 +191,10 @@ public class GameController : MonoBehaviour
                     follower.GetComponent<TestFollower>().isWASD = false;
                 }
                 GameBegin();
-            }
+            }*/
         }
 
-		if(Input.GetKeyDown(KeyCode.Joystick1Button6)){
+		if(Input.GetKeyDown(KeyCode.Joystick1Button6) || Input.GetKeyDown(KeyCode.Joystick2Button6)){
 			
 			Application.Quit();
 		}
@@ -169,6 +208,7 @@ public class GameController : MonoBehaviour
 
 	void FixedUpdate()
 	{
+
 
 		if(preGame)											//if pregame setup is running
 		{
@@ -311,6 +351,8 @@ public class GameController : MonoBehaviour
 
 	void GameBegin()
 	{
+		GameObject.FindObjectOfType<HandleTwoPlayer> ().WhenGameBegins ();
+
 		preGame = false;
 		StartCoroutine(MoveTitleUp());
 		lineScr.Active(true);
@@ -336,13 +378,36 @@ public class GameController : MonoBehaviour
 		scoreScr.enabled = true;
 		//adScr.ShowBanner();
 
-		audioS.clip = songs[Random.Range(0, songs.Length)];
-		audioS.Play ();
+		if(!PlayerPrefs.HasKey("LastSong")){
+
+			PlayerPrefs.SetInt ("LastSong", 12);
+		}
+
+		PlaySongs ();
+
+		//audioS.clip = songs[Random.Range(0, songs.Length)];
+		//audioS.Play ();
 
 		//For having instructions fade out when the game starts ~Adam
 		if(mStartInstructions != null)
 		{
 			mStartInstructions.StartFade();
+		}
+	}
+
+	void PlaySongs(){
+
+		int songNum = Random.Range (0, songs.Length);
+
+		if (songNum == PlayerPrefs.GetInt ("LastSong")) {
+
+			PlaySongs ();
+		} else {
+
+			audioS.clip = songs [songNum];
+			audioS.Play ();
+
+			PlayerPrefs.SetInt ("LastSong", songNum);
 		}
 	}
 

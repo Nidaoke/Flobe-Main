@@ -5,6 +5,7 @@ public class CapCodeHandler : MonoBehaviour {
 
 	public GameObject old;
 	public GameObject newer;
+	public GameObject orange;
 
 	public GameObject line;
 
@@ -46,6 +47,66 @@ public class CapCodeHandler : MonoBehaviour {
 
 			old.SetActive(true);
 			newer.SetActive(false);
+		}
+
+		if (line.GetComponent<Line> ().orangeMulti.activeSelf) {
+
+			if (line.GetComponent<Line> ().player1) {
+
+				if (isLeft) {
+
+					orange.SetActive (true);
+
+					newer.SetActive (false);
+					old.SetActive (false);
+
+				} else {
+
+					orange.SetActive (false);
+				}
+			} else {
+
+				if (!isLeft) {
+
+					orange.SetActive (true);
+
+					newer.SetActive (false);
+					old.SetActive (false);
+
+				} else {
+
+					orange.SetActive (false);
+				}
+			}
+		} else if (line.GetComponent<Line> ().orangeMulti2.activeSelf) {
+
+			if (line.GetComponent<Line> ().player1) {
+
+				if (!isLeft) {
+
+					orange.SetActive (true);
+
+					newer.SetActive (false);
+					old.SetActive (false);
+
+				} else {
+
+					orange.SetActive (false);
+				}
+			} else {
+
+				if (isLeft) {
+
+					orange.SetActive (true);
+
+					newer.SetActive (false);
+					old.SetActive (false);
+
+				} else {
+
+					orange.SetActive (false);
+				}
+			}
 		}
 	}
 }

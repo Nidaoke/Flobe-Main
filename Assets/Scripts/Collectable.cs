@@ -23,13 +23,26 @@ public class Collectable : Ball
 
 	void OnDestroy()
 	{
+
+		//Destroy(Instantiate(bluePop, objJ.transform.position, Quaternion.identity), 1);
+
 		if(missed)
 		{
 			GameObject c = Instantiate (ballMiss, transform.position, Quaternion.identity) as GameObject;
 			c.GetComponent<AudioSource>().PlayOneShot(alert);
-			GameController.instance.scoreScr.ResetMultiplier();
 
-            GameObject.FindObjectOfType<SeekerSpawner>().SpawnSeeker();
+			if (tag == "Purple") {
+
+				GameController.instance.scoreScr.ResetMultiplier (false);
+			} else {
+
+				GameController.instance.scoreScr.ResetMultiplier(true);
+			}
+
+			if (!GameObject.FindObjectOfType<Line> ().invincible) {
+
+				GameObject.FindObjectOfType<SeekerSpawner>().SpawnSeeker();
+			}
 		}
 	}
 }

@@ -279,7 +279,7 @@ public class TestFollower : MonoBehaviour {
 
         // currentScale = transform.localScale;
 
-        speed = 7 + ((float) scoree.multiplier / 8);
+        speed = 7 + ((float) scoree.multiplier / 10);
 
         if (grow)
         {

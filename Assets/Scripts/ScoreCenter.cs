@@ -7,107 +7,258 @@ using Steamworks;
 
 public class ScoreCenter : MonoBehaviour 
 {
+	public bool increaseMultiplierGrowth;
+
+	public float pseudoMultiplier;
+
+	public bool matchMultipliers = true;
+
 	public Spawner spawnScr;
 	public BGEffects bgScr;
 	public GameObject floatingTextInst;
 	public AudioSource audioS;
 	public AudioClip[] fillSounds;
-	public Renderer multiplierVisual;
-	public ParticleSystem overflow;
-	public TextMesh multiMesh, scoreMesh;
-	public int score, multiplier = 1;
+	public Renderer multiplierVisual, multiplierVisual2, liveVisual, liveVisual2;
+	public ParticleSystem overflow, overflow2;
+	public TextMesh multiMesh, multiMesh2, scoreMesh, scoreMesh2, lifeMesh, lifeMesh2;
+	public int score, score2, multiplier = 1, multiplier2 = 1;
+
 	public float period;
 	public Animator scoreAnim;
 
 	public GameObject rightObject, leftObject, leftObject2, rightObject2;
 
 	bool lerping;
-	float multTimer = 2f;
+	public float multTimer = 2f, multTimer2 = 2f;
 
     public void Awake()
     {
 
         if (multiplierVisual.gameObject.activeSelf == false)
         {
-
-
+			
             scoreMesh.text = string.Format("{0:0000}", PlayerPrefs.GetInt("bestScoreLocal"));
         }
     }
 
+	public void ResetPseudo(int pseudoToSet){
+
+		matchMultipliers = false;
+		pseudoMultiplier = pseudoToSet;
+	}
+
 	public void Update(){
 
-        if (multiplierVisual.gameObject.activeSelf == false)
-        {
+		if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false) {
 
-            multiplierVisual.gameObject.SetActive(true);
-            scoreMesh.text = string.Format("{0:0000}", score);
-            scoreMesh.gameObject.transform.position = new Vector3(scoreMesh.gameObject.transform.position.x - 1.2f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
-        }
+			//if (Input.GetKeyDown (KeyCode.Y)) {
 
-	///	transform.position = new Vector3 (-16, 6.45f, 2);
-		transform.localScale = new Vector3 (2.2f, 2.2f, 1);
+			//ResetPseudo (3);
+			//}
+
+			if (matchMultipliers) {
+				pseudoMultiplier = multiplier;
+			} else {
+				float tParam = 0;
+				float lerpSpeed = .065f;
+				if (tParam < 1) {
+					tParam += Time.deltaTime * lerpSpeed;
+					pseudoMultiplier = Mathf.Lerp (pseudoMultiplier, multiplier, tParam);
+				}
+
+				if (Mathf.Abs (multiplier - pseudoMultiplier) < .5f) {
+					pseudoMultiplier = multiplier;
+					matchMultipliers = true;
+				}
+
+			}
+
+			if (multiplierVisual.gameObject.activeSelf == false) {
+
+				multiplierVisual.gameObject.SetActive (true);
+				scoreMesh.text = string.Format ("{0:0000}", score);
+				scoreMesh.gameObject.transform.position = new Vector3 (scoreMesh.gameObject.transform.position.x - 1.2f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
+			}
+
+			///	transform.position = new Vector3 (-16, 6.45f, 2);
+			transform.localScale = new Vector3 (2.2f, 2.2f, 1);
+		} else {
+
+			//liveVisual.material.SetFloat ("_Cutoff", .1f);
+
+			Line[] lines = GameObject.FindObjectsOfType<Line> ();
+			foreach (Line line in lines) {
+
+				if (line.player1) {
+
+					lifeMesh.text = line.lives.ToString();
+				} else {
+					
+					lifeMesh2.text = line.lives.ToString();
+				}
+			}
+
+			//lifeMesh.text = string.Format("{0:0000}", 
+
+			multiplierVisual.material.SetFloat ("_Cutoff", Mathf.Clamp (1 - (multTimer - Mathf.FloorToInt (multTimer)), 0.001f, 1));
+
+			if (matchMultipliers) {
+				pseudoMultiplier = multiplier;
+			} else {
+				float tParam = 0;
+				float lerpSpeed = .065f;
+				if (tParam < 1) {
+					tParam += Time.deltaTime * lerpSpeed;
+					pseudoMultiplier = Mathf.Lerp (pseudoMultiplier, multiplier, tParam);
+				}
+
+				if (Mathf.Abs (multiplier - pseudoMultiplier) < .5f) {
+					pseudoMultiplier = multiplier;
+					matchMultipliers = true;
+				}
+
+			}
+		}
+
+		if (multiplierVisual.gameObject.activeSelf == false)
+		{
+
+			if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer) {
+
+				multiplierVisual.gameObject.SetActive (true);
+				multiplierVisual2.gameObject.SetActive (true);
+
+				multiplierVisual.gameObject.transform.position = new Vector3 (-5.4692f, multiplierVisual2.gameObject.transform.position.y, multiplierVisual2.gameObject.transform.position.z);
+				multiplierVisual2.gameObject.transform.position = new Vector3 (5.4692f, multiplierVisual.gameObject.transform.position.y, multiplierVisual.gameObject.transform.position.z);
+
+				scoreMesh.text = string.Format("{0:0000}", score);
+				scoreMesh2.gameObject.SetActive (true);
+				scoreMesh2.text = string.Format("{0:0000}", score2);
+
+				scoreMesh.gameObject.transform.position = new Vector3 (-.2f, scoreMesh2.gameObject.transform.position.y, scoreMesh2.gameObject.transform.position.z);
+				scoreMesh2.gameObject.transform.position = new Vector3 (4f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
+			}
+		}
 	}
 
 	public void AddScore()
 	{
-		//if(GameController.instance.signedIn)
-		//{
-			//GameController.instance.BallCountCheck();
-		//	PlayGamesPlatform.Instance.Events.IncrementEvent("CgkI052F_vMSEAIQBw", 1);
-		//}
-		score += (multiplier * 2);												//add the multiplier to the score
-		scoreMesh.text = string.Format("{0:0000}", score);
-		StartCoroutine(CollectLerp(1f/multiplier));
-		audioS.Stop();
-		audioS.PlayOneShot(fillSounds[Random.Range(0,fillSounds.Length-1)]);
-		//if(score >= 500)
-			//GiftizBinding.missionComplete();
+		if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false) {
+
+			if (!GameObject.FindObjectOfType<Line> ().invincible) {
+
+				score += (multiplier * 2);												//add the multiplier to the score
+				scoreMesh.text = string.Format ("{0:0000}", score);
+				StartCoroutine (CollectLerp (1f / multiplier));
+				audioS.Stop ();
+				audioS.PlayOneShot (fillSounds [Random.Range (0, fillSounds.Length - 1)]);
+				//if(score >= 500)
+				//GiftizBinding.missionComplete();
+			} else {
+				scoreMesh.text = string.Format ("{0:0000}", score);
+				audioS.Stop();
+				audioS.PlayOneShot(fillSounds[Random.Range(0,fillSounds.Length-1)]);
+			}
+		}
+	}
+
+	public void AddScoreMultiplier(int player){
+
+		if (player == 1) {
+
+			score += (multiplier * 2);
+			scoreMesh.text = string.Format ("{0:0000}", score);
+			StartCoroutine (CollectLerp (1f / multiplier));
+			audioS.Stop ();
+			audioS.PlayOneShot (fillSounds [Random.Range (0, fillSounds.Length - 1)]);
+		} else {
+
+			score2 += (multiplier2 * 2);
+			scoreMesh2.text = string.Format ("{0:0000}", score2);
+			StartCoroutine (CollectLerp2 (1f / multiplier2));
+			audioS.Stop ();
+			audioS.PlayOneShot (fillSounds [Random.Range (0, fillSounds.Length - 1)]);
+		}
 	}
 
 	public void UpdateMultiplier()
 	{
-		/*if(multTimer > 1)
-			multTimer -= Time.deltaTime/period;
-		else
-			multTimer = 1;*/
-		if(multTimer > multiplier+1)
-		{
+
+		if (multTimer > multiplier + 1) {
 			multiplier++;
-			overflow.Play(false);
-			StopCoroutine(RadialBounce());
-			StartCoroutine(RadialBounce());
-			Additions();
+			overflow.Play (false);
+			//StopCoroutine (RadialBounce ());
+			//StartCoroutine (RadialBounce ());
+			Additions ();
 
-            int multiply;
-            SteamUserStats.GetStat("Multiplier", out multiply);
+			int multiply;
+			SteamUserStats.GetStat ("Multiplier", out multiply);
 
-            if (multiplier > multiply)
-            {
+			if (multiplier > multiply) {
 
-                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().Multiplier = multiplier;
-                GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
-            }
+				GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().Multiplier = multiplier;
+				GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().m_bStoreStats = true;
+			}
 		}
-		/*else if(multTimer < multiplier && multTimer > 1)
-		{
-			multiplier--;
-			spawnScr.hazardChance -= 0.01f;
-		}*/
-		if(spawnScr.hazardChance >= 0.3f)
+
+		if (spawnScr.hazardChance >= 0.3f)
 			spawnScr.hazardChance = 0.3f;
-		multiMesh.text = string.Format("{0:00}", multiplier);
-		multiplierVisual.material.SetFloat("_Cutoff",Mathf.Clamp(1-(multTimer-Mathf.FloorToInt(multTimer)),0.001f,1));
+		multiMesh.text = string.Format ("{0:00}", multiplier);
+		multiplierVisual.material.SetFloat ("_Cutoff", Mathf.Clamp (1 - (multTimer - Mathf.FloorToInt (multTimer)), 0.001f, 1));
+
+		if (multTimer2 > multiplier2 + 1) {
+
+			multiplier2++;
+			overflow2.Play (false);
+
+			Additions2Player ();
+		}
+
+		if (spawnScr.hazardChance >= 0.3f)
+			spawnScr.hazardChance = 0.3f;
+		multiMesh2.text = string.Format ("{0:00}", multiplier2);
+		multiplierVisual2.material.SetFloat ("_Cutoff", Mathf.Clamp (1 - (multTimer2 - Mathf.FloorToInt (multTimer2)), 0.001f, 1));
 	}
 
 	IEnumerator CollectLerp(float amt)
 	{
-		float t = 0, start = multTimer;
-		while(t < 1)
-		{
-			multTimer = Mathf.Lerp(start,start+amt,t);
-			t += Time.deltaTime*5;
-			yield return null;
+
+		if (increaseMultiplierGrowth == false) {
+			float t = 0, start = multTimer;
+			while (t < 1) {
+				multTimer = Mathf.Lerp (start, start + amt, t);
+				t += Time.deltaTime * 5;
+				yield return null;
+			}
+		} else {
+
+			float t = 0, start = multTimer;
+			while (t < 1) {
+				multTimer = Mathf.Lerp (start, (start + (amt * 2.3f)), t);
+				t += Time.deltaTime * 5;
+				yield return null;
+			}
+		}
+	}
+
+	IEnumerator CollectLerp2(float amt)
+	{
+
+		if (increaseMultiplierGrowth == false) {
+			float t = 0, start = multTimer2;
+			while (t < 1) {
+				multTimer2 = Mathf.Lerp (start, start + amt, t);
+				t += Time.deltaTime * 5;
+				yield return null;
+			}
+		} else {
+
+			float t = 0, start = multTimer2;
+			while (t < 1) {
+				multTimer2 = Mathf.Lerp (start, (start + (amt * 2.3f)), t);
+				t += Time.deltaTime * 5;
+				yield return null;
+			}
 		}
 	}
 
@@ -121,17 +272,6 @@ public class ScoreCenter : MonoBehaviour
 			yield return null;
 		}
 	}
-	
-	/*IEnumerator ResetShake()
-	{
-		float t = 0;
-		while(t < 1)
-		{
-			transform.localPosition = Vector3.Lerp (pos1,pos2,Mathf.PingPong(Time.time,t));
-			t += Time.deltaTime*2;
-			yield return null;
-		}
-	}*/
 
 	public void GameOver()
 	{
@@ -149,59 +289,117 @@ public class ScoreCenter : MonoBehaviour
 	
 	void Additions ()
 	{
-		spawnScr.multiLevel ++;
+		if(GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false){
+
+			spawnScr.multiLevel ++;
+			spawnScr.multiLevel2++;
+			spawnScr.hazardChance += 0.005f;
+			GameController.instance.colorScr.hueShiftSpeed += 0.01f;
+			spawnScr.spawnRateScale += 0.01f;
+			spawnScr.ballSpeedScale += 0.01f;
+			bgScr.rotSpeed += 0.001f;
+			if(multiplier > 20)
+				spawnScr.homingChance += 0.0005f;
+		}
+	}
+
+	void Additions2Player ()
+	{
+
+		spawnScr.multiLevel++;
 		spawnScr.multiLevel2++;
 		spawnScr.hazardChance += 0.005f;
 		GameController.instance.colorScr.hueShiftSpeed += 0.01f;
 		spawnScr.spawnRateScale += 0.01f;
 		spawnScr.ballSpeedScale += 0.01f;
 		bgScr.rotSpeed += 0.001f;
-		if(multiplier > 20)
+		if (multiplier > 20 || multiplier2 > 20)
 			spawnScr.homingChance += 0.0005f;
+
+
 	}
 
     //PlayerPrefs
 	
-	public void ResetMultiplier ()
+	public void ResetMultiplier (bool blue)
 	{
-		//if(multiplier >= 5)
-		spawnScr.multiLevel /= 3;
+		if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false) {
 
-        //leftObject.transform.localScale = new Vector3 (leftObject.transform.localScale.x + .4f, leftObject.transform.localScale.y + .4f, 1);
-        //rightObject.transform.localScale = new Vector3 (rightObject.transform.localScale.x + .4f, rightObject.transform.localScale.y + .4f, 1);
+			if (!GameObject.FindObjectOfType<Line> ().invincible) {
 
-		if (leftObject2.activeSelf) {
+				matchMultipliers = true;
 
-			leftObject2.GetComponent<TestFollower2> ().IncreaseScale ();
+				//if(multiplier >= 5)
+				spawnScr.multiLevel /= 3;
+
+				//leftObject.transform.localScale = new Vector3 (leftObject.transform.localScale.x + .4f, leftObject.transform.localScale.y + .4f, 1);
+				//rightObject.transform.localScale = new Vector3 (rightObject.transform.localScale.x + .4f, rightObject.transform.localScale.y + .4f, 1);
+
+				if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false) {
+
+					if (leftObject2.activeSelf) {
+
+						leftObject2.GetComponent<TestFollower2> ().IncreaseScale ();
+					}
+					if (rightObject2.activeSelf) {
+
+						rightObject2.GetComponent<TestFollower2> ().IncreaseScale ();
+					}
+
+					leftObject.GetComponent<TestFollower> ().IncreaseScale ();
+					rightObject.GetComponent<TestFollower> ().IncreaseScale ();
+
+					GameObject[] growParticle = GameObject.FindGameObjectsWithTag ("Doo");
+
+					foreach (GameObject grop in growParticle) {
+
+						grop.GetComponent<ScaleToParent> ().DooParticle ();
+					}
+				}
+
+				multiplier = 1;
+				multTimer = 1;
+				bgScr.rotSpeed -= 0.01f;
+			}
+		} else {
+
+			if (blue) {
+
+				Line[] lines = GameObject.FindObjectsOfType<Line> ();
+
+				foreach (Line g in lines) {
+
+					if (g.player1) {
+
+						g.HitBad (null);
+					}
+				}
+
+				matchMultipliers = true;
+				spawnScr.multiLevel /= 3;
+
+				multiplier = 1;
+				multTimer = 1;
+				bgScr.rotSpeed -= 0.01f;
+			} else {
+
+				Line[] lines = GameObject.FindObjectsOfType<Line> ();
+
+				foreach (Line g in lines) {
+
+					if (g.player1 == false) {
+
+						g.HitBad (null);
+					}
+				}
+
+				matchMultipliers = true;
+				spawnScr.multiLevel /= 3;
+
+				multiplier2 = 1;
+				multTimer2 = 1;
+				bgScr.rotSpeed -= 0.01f;
+			}
 		}
-		if (rightObject2.activeSelf) {
-
-			rightObject2.GetComponent<TestFollower2> ().IncreaseScale ();
-		}
-
-        leftObject.GetComponent<TestFollower>().IncreaseScale();
-        rightObject.GetComponent<TestFollower>().IncreaseScale();
-
-        GameObject[] growParticle = GameObject.FindGameObjectsWithTag("Doo");
-
-        foreach (GameObject grop in growParticle)
-        {
-
-            grop.GetComponent<ScaleToParent>().DooParticle();
-        }
-
-        //Vector3 newScale = new Vector3 (leftObject.transform.localScale.x + .2f, leftObject.transform.localScale.y + .2f, 1);
-        //leftObject.transform.localScale = Vector3.Lerp (leftObject.transform.localScale, newScale, 1);
-
-        //newScale = new Vector3 (rightObject.transform.localScale.x + .2f, rightObject.transform.localScale.y + .2f, 1);
-        //leftObject.transform.localScale = Vector3.Lerp (leftObject.transform.localScale, newScale, 1);
-
-        ///leftObject.transform.position = new Vector2 (leftObject.transform.position.x - 1, leftObject.transform.position.y);
-        ///rightObject.transform.position = new Vector2 (rightObject.transform.position.x + 1, rightObject.transform.position.y);
-
-        //scoreAnim.Play("ScoreShake",-1,0f);
-        multiplier = 1;
-		multTimer = 1;
-		bgScr.rotSpeed -= 0.01f;
 	}
 }
