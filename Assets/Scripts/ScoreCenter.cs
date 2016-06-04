@@ -7,6 +7,9 @@ using Steamworks;
 
 public class ScoreCenter : MonoBehaviour 
 {
+	public bool currentlyBadBonus;
+	public int badBonusPoints = 100;
+
 	public bool increaseMultiplierGrowth;
 
 	public float pseudoMultiplier;
@@ -30,6 +33,15 @@ public class ScoreCenter : MonoBehaviour
 
 	bool lerping;
 	public float multTimer = 2f, multTimer2 = 2f;
+
+	public void HitBadDuringBonus(){
+		if(currentlyBadBonus)
+			badBonusPoints--;
+	}
+
+	public void EndBadBonus(){
+		AddScoreWithoutUpsettingMultiplier (badBonusPoints);
+	}
 
     public void Awake()
     {
@@ -129,6 +141,11 @@ public class ScoreCenter : MonoBehaviour
 				scoreMesh2.gameObject.transform.position = new Vector3 (2.6f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
 			}
 		}
+	}
+
+	public void AddScoreWithoutUpsettingMultiplier(int scoreToAdd){
+		score += (multiplier * scoreToAdd);												//add the multiplier to the score
+		scoreMesh.text = string.Format ("{0:0000}", score);
 	}
 
 	public void AddScore()

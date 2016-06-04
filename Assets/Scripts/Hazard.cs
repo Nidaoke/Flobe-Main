@@ -12,8 +12,10 @@ public class Hazard : Ball
 
     void OnDestroy()
     {
-		GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddGreenEnemy ();
-        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().GreensDodged++;
-        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+		if (!GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus) {
+			GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddGreenEnemy ();
+			GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().GreensDodged++;
+			GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().m_bStoreStats = true;
+		}
     }
 }

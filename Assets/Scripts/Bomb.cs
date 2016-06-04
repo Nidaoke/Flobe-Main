@@ -40,7 +40,9 @@ public class Bomb : Ball
 	}
 
 	void OnDestroy(){
-		GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddBombEnemy ();
+		if (!GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus) {
+			GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddBombEnemy ();
+		}
 	}
 
 	IEnumerator Explode(){

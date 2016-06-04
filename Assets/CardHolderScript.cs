@@ -30,7 +30,13 @@ public class CardHolderScript : MonoBehaviour {
 		// GetComponent<Rigidbody>().velocity = new Vector3(0, -5, 0);
 		//GetComponent<Rigidbody>().useGravity = true;
 
+		Ball[] balls = GameObject.FindObjectsOfType<Ball> ();
+		foreach (Ball ball in balls)
+			Destroy (ball.gameObject);
+
 		yield return new WaitForSeconds (mFadeDelay);
+
+		GameObject.FindObjectOfType<BonusManager> ().setToFreeze = false;
 
 		transform.position = new Vector3 (1000, 1000, 1000);
 

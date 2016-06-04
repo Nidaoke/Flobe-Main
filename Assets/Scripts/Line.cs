@@ -750,7 +750,11 @@ public class Line : MonoBehaviour
 
 	public void HitBad(GameObject obj3){
 
-		if (!invincibleToColors || !invincibleToEnemies) {
+		Debug.Log ("HitBad!");
+
+		if (!invincibleToColors && !invincibleToEnemies) {
+
+			Debug.Log ("I Hate My Life");
 
 			if (twoPlayer) {
 
@@ -795,6 +799,8 @@ public class Line : MonoBehaviour
 
 			if (obj3.layer == 10) {
 
+				Debug.Log ("Inv to c or e");
+
 				if (twoPlayer) {
 
 					lives--;
@@ -812,12 +818,15 @@ public class Line : MonoBehaviour
 					audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
 				} else {
 
+					Debug.Log ("1 pl");
+
 					if (!invincibleToEnemies) {
 						audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
 						GameController.instance.StartCoroutine ("EndGame");
 						GetComponent<Line> ().enabled = false;
 					} else {
 						Destroy (obj3.gameObject);
+						scoreScr.HitBadDuringBonus ();
 					}
 				}
 			} else {

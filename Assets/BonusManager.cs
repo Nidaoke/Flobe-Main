@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BonusManager : MonoBehaviour {
 
-	bool setToFreeze;
+	public bool setToFreeze;
 
 	public GameObject cardPicker;
 
@@ -30,20 +30,10 @@ public class BonusManager : MonoBehaviour {
 		}
 
 		if (good) {
-
+			StartCoroutine (GameObject.FindObjectOfType<Spawner> ().FakeSpawn (true));
 		} else {
-			GameObject[] greenBads = GameObject.FindGameObjectsWithTag ("GreenFake");
-			foreach (GameObject bad in greenBads) {
-				GameObject.FindObjectOfType<Spawner> ().SpawnGreen ();
-			}
-			GameObject[] redbads = GameObject.FindGameObjectsWithTag ("RedFake");
-			foreach (GameObject bad in redbads) {
-				GameObject.FindObjectOfType<Spawner> ().SpawnRed ();
-			}
-			GameObject[] bombBads = GameObject.FindGameObjectsWithTag ("BombFake");
-			foreach (GameObject bad in bombBads) {
-				GameObject.FindObjectOfType<Spawner> ().SpawnBomb ();
-			}
+			StartCoroutine (GameObject.FindObjectOfType<Spawner> ().FakeSpawn (false));
+			GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus = true;
 		}
 
 		cap1.GetComponent<SideCapCode> ().flush = false;
@@ -65,6 +55,15 @@ public class BonusManager : MonoBehaviour {
 			foreach (TestFollower test in testies) {
 				test.blockSpeed = true;
 			}
+		} else {
+			Ball[] baylls = GameObject.FindObjectsOfType<Ball> ();
+			foreach (Ball ball in baylls) {
+				ball.UnFreeze ();
+			}
+			TestFollower[] testies = GameObject.FindObjectsOfType<TestFollower> ();
+			foreach (TestFollower test in testies) {
+				test.blockSpeed = false;
+			}
 		}
 
 		if (Input.GetKeyDown (KeyCode.U)) {
@@ -82,6 +81,14 @@ public class BonusManager : MonoBehaviour {
 				Flush ();
 			}
 		}
+	}
+
+	public IEnumerator EndBonus(){
+		Debug.Log ("KILLLLL!");
+		GameObject.FindObjectOfType<ScoreCenter> ().EndBadBonus ();
+		GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus = false;
+		GameObject.FindObjectOfType<ScoreCenter> ().badBonusPoints = 100;
+		yield return new WaitForSeconds(0);
 	}
 
 	public IEnumerator UnFlush(){

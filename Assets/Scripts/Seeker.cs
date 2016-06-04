@@ -14,9 +14,11 @@ public class Seeker : Ball
 
     void OnDestroy()
     {
-		GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddRedEnemy ();
-        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().MissilesDodged++;
-        GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
+		if (!GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus) {
+			GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddRedEnemy ();
+			GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().MissilesDodged++;
+			GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().m_bStoreStats = true;
+		}
     }
 
     ////void MoveSpeedInc(float amt)
