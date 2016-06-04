@@ -631,7 +631,8 @@ public class Line : MonoBehaviour
 
 			GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
 			GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
-			sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddOrangeEnemy ();
+			if(!scoreScr.currentlyGoodBonus)
+				sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddOrangeEnemy ();
 		} else {
 
 			if (player1) {
@@ -640,8 +641,8 @@ public class Line : MonoBehaviour
 				foreach (GameObject spawner in sideSpawners) {
 
 					if (!spawner.GetComponent<SpawnFakes> ().isRight) {
-
-						spawner.GetComponent<SpawnFakes> ().AddOrangeEnemy ();
+						if(!scoreScr.currentlyGoodBonus)
+							spawner.GetComponent<SpawnFakes> ().AddOrangeEnemy ();
 					}
 				}
 			} else {
@@ -650,8 +651,8 @@ public class Line : MonoBehaviour
 				foreach (GameObject spawner in sideSpawners) {
 
 					if (spawner.GetComponent<SpawnFakes> ().isRight) {
-
-						spawner.GetComponent<SpawnFakes> ().AddOrangeEnemy ();
+						if(!scoreScr.currentlyGoodBonus)
+							spawner.GetComponent<SpawnFakes> ().AddOrangeEnemy ();
 					}
 				}
 			}
@@ -687,15 +688,16 @@ public class Line : MonoBehaviour
 			foreach (GameObject spawner in sideSpawners) {
 
 				if (spawner.GetComponent<SpawnFakes> ().isRight) {
-
-					spawner.GetComponent<SpawnFakes> ().AddPurpleEnemy ();
+					if(!scoreScr.currentlyGoodBonus)
+						spawner.GetComponent<SpawnFakes> ().AddPurpleEnemy ();
 				}
 			}
 		} else {
 
 			GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
 			GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
-			sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddPurpleEnemy ();
+			if(!scoreScr.currentlyGoodBonus)
+				sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddPurpleEnemy ();
 		}
 
 
@@ -717,6 +719,8 @@ public class Line : MonoBehaviour
 			objJ.SendMessage ("DestroyBall");
 		} else {
 
+			GameObject.FindObjectOfType<ScoreCenter> ().HitGoodDuringBonus ();
+
 			GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().BluesCollected++;
 			GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().m_bStoreStats = true;
 			hitABlue = true;
@@ -734,15 +738,17 @@ public class Line : MonoBehaviour
 			foreach (GameObject spawner in sideSpawners) {
 
 				if (!spawner.GetComponent<SpawnFakes> ().isRight) {
-
-					spawner.GetComponent<SpawnFakes> ().AddBlueEnemy ();
+					if(!scoreScr.currentlyGoodBonus)
+						spawner.GetComponent<SpawnFakes> ().AddBlueEnemy ();
 				}
 			}
 		} else {
-
+			
 			GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
 			GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
-			sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddBlueEnemy ();
+
+			if(!scoreScr.currentlyGoodBonus)
+				sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddBlueEnemy ();
 		}
 
 

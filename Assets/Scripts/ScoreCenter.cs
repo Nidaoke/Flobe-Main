@@ -7,6 +7,9 @@ using Steamworks;
 
 public class ScoreCenter : MonoBehaviour 
 {
+	public bool currentlyGoodBonus;
+	public int goodBonusPoints = 0;
+
 	public bool currentlyBadBonus;
 	public int badBonusPoints = 100;
 
@@ -33,6 +36,15 @@ public class ScoreCenter : MonoBehaviour
 
 	bool lerping;
 	public float multTimer = 2f, multTimer2 = 2f;
+
+	public void HitGoodDuringBonus(){
+		if (currentlyGoodBonus)
+			goodBonusPoints++;
+	}
+
+	public void EndGoodBonus(){
+		AddScoreWithoutUpsettingMultiplier (goodBonusPoints);
+	}
 
 	public void HitBadDuringBonus(){
 		if(currentlyBadBonus)

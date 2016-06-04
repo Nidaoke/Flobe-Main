@@ -37,13 +37,24 @@ public class Spawner : MonoBehaviour
 			transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);		//rotates,adjusts to suit editor setup
 
 			if (good) {
-				num = Random.value;
-				if (num < .6f)
-					wutToSpawn = hazard;
-				else if (num < .8f)
-					wutToSpawn = homing;
-				else
-					wutToSpawn = bomb;
+				if (GameObject.FindObjectOfType<Line> ().multiplierOnePlayer20) {
+					num = Random.value;
+					if (num < .33f)
+						wutToSpawn = ball;
+					else if (num < .66f)
+						wutToSpawn = purple;
+					else
+						wutToSpawn = orange;
+				} else if (GameObject.FindObjectOfType<Line> ().multiplierOnePlayer10) {
+					num = Random.value;
+					if (num < .5f)
+						wutToSpawn = ball;
+					else
+						wutToSpawn = purple;
+				} else {
+					wutToSpawn = ball;
+				}
+
 			} else {
 				num = Random.value;
 				if (num < .6f)

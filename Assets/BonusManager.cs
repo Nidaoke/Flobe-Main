@@ -31,6 +31,7 @@ public class BonusManager : MonoBehaviour {
 
 		if (good) {
 			StartCoroutine (GameObject.FindObjectOfType<Spawner> ().FakeSpawn (true));
+			GameObject.FindObjectOfType<ScoreCenter> ().currentlyGoodBonus = true;
 		} else {
 			StartCoroutine (GameObject.FindObjectOfType<Spawner> ().FakeSpawn (false));
 			GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus = true;
@@ -88,7 +89,16 @@ public class BonusManager : MonoBehaviour {
 		GameObject.FindObjectOfType<ScoreCenter> ().EndBadBonus ();
 		GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus = false;
 		GameObject.FindObjectOfType<ScoreCenter> ().badBonusPoints = 100;
-		yield return new WaitForSeconds(0);
+		GameObject.FindObjectOfType<ScoreCenter> ().EndGoodBonus ();
+		GameObject.FindObjectOfType<ScoreCenter> ().currentlyGoodBonus = false;
+		GameObject.FindObjectOfType<ScoreCenter> ().goodBonusPoints = 0;
+		yield return new WaitForSeconds(5);
+		GameObject.FindObjectOfType<StartInstructionsFade> ().StartFade ();
+		yield return new WaitForSeconds (5f);
+		GameObject.FindObjectOfType<Spawner> ().pauseSpawning = false;
+		GameObject.FindObjectOfType<Line> ().invincibleToColors = GameObject.FindObjectOfType<Line> ().invincibleToEnemies = false;
+		bottom1.SetActive (true);
+		bottom2.SetActive (true);
 	}
 
 	public IEnumerator UnFlush(){
