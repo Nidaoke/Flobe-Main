@@ -7,11 +7,24 @@ public class LerpDown : MonoBehaviour {
 	[SerializeField] private float mFadeDuration = 1f;
 	[SerializeField] private SpriteRenderer mSpriteRenderer;
 
+	public bool randomImage;
+
+	public Sprite[] images;
+
+	// Update is called once per frame
+	void Update () {
+
+	}
+
 	Vector3 oldPosition;
 
 	void Start(){
 
 		oldPosition = transform.position;
+
+		if (randomImage) {
+			GetComponent<SpriteRenderer> ().sprite = images [Random.Range (0, images.Length)];
+		}
 	}
 
 	void Reset(){

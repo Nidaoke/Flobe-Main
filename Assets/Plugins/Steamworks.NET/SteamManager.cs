@@ -17,7 +17,7 @@ using Steamworks;
 class SteamManager : MonoBehaviour
 {
 
-	public bool dontOpenSteam;
+	public bool dontOpenSteam = false;
     private static SteamManager s_instance;
     private static SteamManager Instance
     {

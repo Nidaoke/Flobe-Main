@@ -5,6 +5,8 @@ public class TestFollower : MonoBehaviour {
 
 	public GameObject holder1, holder2;
 
+	public bool blockSpeed;
+
     public Vector3 desiredScale;
     public Vector3 currentScale;
     public bool grow;
@@ -239,17 +241,17 @@ public class TestFollower : MonoBehaviour {
 
 			transform.position = new Vector3(holder1.transform.position.x + .35f, transform.position.y, 10);
 		}
-		if (transform.position.y < -4.21f) {
+		if (transform.position.y < -3.8f) {
 
-			transform.position = new Vector3(transform.position.x, -4.21f, 10);
+			transform.position = new Vector3(transform.position.x, -3.8f, 10);
 		}
 		if (transform.position.x > holder2.transform.position.x - .35f) {
 
 			transform.position = new Vector3(holder2.transform.position.x - .35f, transform.position.y, 10);
 		}
-		if (transform.position.y > 10.65f) {
+		if (transform.position.y > 10.2f) {
 
-			transform.position = new Vector3(transform.position.x, 10.65f, 10);
+			transform.position = new Vector3(transform.position.x, 10.2f, 10);
 		}
 	}
 
@@ -279,7 +281,18 @@ public class TestFollower : MonoBehaviour {
 
         // currentScale = transform.localScale;
 
-        speed = 7 + ((float) scoree.multiplier / 10);
+		if (blockSpeed) {
+			float tParam = 0;
+			float speedy = .7f;
+
+			if (tParam < 1) {
+
+				tParam += Time.deltaTime * speedy;
+				speed = Mathf.Lerp (speed, 0, tParam);
+			}
+		}
+		else
+			speed = 7 + ((float) scoree.multiplier / 10);
 
         if (grow)
         {

@@ -3,6 +3,7 @@ using System.Collections;
 //using GooglePlayGames;
 //using GooglePlayGames.BasicApi;
 using UnityEngine.SocialPlatforms;
+using UnityEngine.SceneManagement;
 
 public class TallyScore : MonoBehaviour 
 {
@@ -100,6 +101,7 @@ public class TallyScore : MonoBehaviour
 		newScore = false;
 		retryButt.SetActive(false);
 		StopAllCoroutines();
-		GameController.instance.ResetGame();
+		SceneManager.LoadScene(1);
+		//GameController.instance.ResetGame();
 	}
 }

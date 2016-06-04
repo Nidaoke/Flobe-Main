@@ -3,6 +3,10 @@ using System.Collections;
 
 public class BonusManager : MonoBehaviour {
 
+	bool setToFreeze;
+
+	public GameObject cardPicker;
+
 	public int totalBlues, totalPurples, totalOranges;
 
 	public bool inProcessofFlushing;
@@ -14,22 +18,63 @@ public class BonusManager : MonoBehaviour {
 	public GameObject bottom1, bottom2;
 
 	public GameObject cap1, cap2;
+
+	public void SpawnEnemies(bool good){
+
+		Line[] lines = GameObject.FindObjectsOfType<Line> ();
+		foreach (Line line in lines) {
+			if (good)
+				line.invincibleToColors = true;
+			else
+				line.invincibleToEnemies = true;
+		}
+
+		if (good) {
+
+		} else {
+			GameObject[] greenBads = GameObject.FindGameObjectsWithTag ("GreenFake");
+			foreach (GameObject bad in greenBads) {
+				GameObject.FindObjectOfType<Spawner> ().SpawnGreen ();
+			}
+			GameObject[] redbads = GameObject.FindGameObjectsWithTag ("RedFake");
+			foreach (GameObject bad in redbads) {
+				GameObject.FindObjectOfType<Spawner> ().SpawnRed ();
+			}
+			GameObject[] bombBads = GameObject.FindGameObjectsWithTag ("BombFake");
+			foreach (GameObject bad in bombBads) {
+				GameObject.FindObjectOfType<Spawner> ().SpawnBomb ();
+			}
+		}
+
+		cap1.GetComponent<SideCapCode> ().flush = false;
+		cap2.GetComponent<SideCapCode> ().flush = false;
+
+		bottom1.SetActive (false);
+		bottom2.SetActive (false);
+	}
 	
 	// Update is called once per frame
 	void Update () {
 
-		//if (doFlush) {
-	
-		//}
+		if (setToFreeze) {
+			Ball[] baylls = GameObject.FindObjectsOfType<Ball> ();
+			foreach (Ball ball in baylls) {
+				ball.Freeze ();
+			}
+			TestFollower[] testies = GameObject.FindObjectsOfType<TestFollower> ();
+			foreach (TestFollower test in testies) {
+				test.blockSpeed = true;
+			}
+		}
 
 		if (Input.GetKeyDown (KeyCode.U)) {
 
 			Flush ();
 		}
 	
-		totalBlues = spawner1.GetComponent<SpawnFakes> ().blues + spawner2.GetComponent<SpawnFakes> ().blues;
-		totalPurples = spawner1.GetComponent<SpawnFakes> ().purples + spawner2.GetComponent<SpawnFakes> ().purples;
-		totalOranges = spawner1.GetComponent<SpawnFakes> ().oranges + spawner2.GetComponent<SpawnFakes> ().oranges;
+		totalBlues = spawner1.GetComponent<SpawnFakes> ().blues;
+		totalPurples = spawner1.GetComponent<SpawnFakes> ().purples;
+		totalOranges = spawner1.GetComponent<SpawnFakes> ().oranges;
 
 		if (cap1.GetComponent<SideCapCode> ().flush || cap2.GetComponent<SideCapCode> ().flush) {
 			if (!inProcessofFlushing) {
@@ -60,7 +105,7 @@ public class BonusManager : MonoBehaviour {
 		Line[] lines = GameObject.FindObjectsOfType<Line> ();
 		foreach (Line line in lines) {
 
-			line.invincible = false;
+			line.invincibleToColors = line.invincibleToEnemies = false;
 		}
 
 		cap1.GetComponent<SideCapCode> ().flush = false;
@@ -79,16 +124,18 @@ public class BonusManager : MonoBehaviour {
 		spawner2.GetComponent<SpawnFakes> ().purples = 0;
 		spawner1.GetComponent<SpawnFakes> ().oranges = 0;
 		spawner2.GetComponent<SpawnFakes> ().oranges = 0;
-
-
-
 	}
 
 	public IEnumerator DoFlushyThings(){
+		setToFreeze = true;
+		GameObject.FindObjectOfType<Spawner> ().pauseSpawning = true;
+		yield return new WaitForSeconds (3);
+
+		cardPicker.SetActive (true);
 
 		//GameObject.FindObjectOfType<Spawner> ().pauseSpawning = true;
 
-		Line[] lines = GameObject.FindObjectsOfType<Line> ();
+		/*Line[] lines = GameObject.FindObjectsOfType<Line> ();
 		foreach (Line line in lines) {
 
 			line.invincible = true;
@@ -121,6 +168,7 @@ public class BonusManager : MonoBehaviour {
 
 		bottom1.SetActive (false);
 		bottom2.SetActive (false);
+		*/
 	}
 
 	public void Flush(){

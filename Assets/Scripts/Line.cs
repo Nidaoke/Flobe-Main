@@ -6,11 +6,19 @@ public class Line : MonoBehaviour
 {
 	#region variables
 
-	public bool invincible;
+	public enum threeBarPlace
+	{
+		blueLeft,
+		blueMiddle,
+		blueRight
+	}
+	public threeBarPlace barPlace = threeBarPlace.blueLeft;
+
+	public bool invincibleToEnemies, invincibleToColors;
 
 	public int lives = 5;
 
-	public int triggesPressed; //testing
+	//public int triggesPressed; //testing
 
 	public bool twoPlayer;
 	public bool player1;
@@ -45,8 +53,10 @@ public class Line : MonoBehaviour
 
 	public GameObject bluePop;
 
-	public GameObject purple, purple2, orange, orangeMulti, orangeMulti2;
-	public bool hitMultiplier, hitMultiplier2, hitmultiplierForTwoPlayer;
+	//public GameObject purple, purple2, orange, orangeMulti, orangeMulti2;
+	public GameObject orangeMulti, orangeMulti2;
+	public GameObject leftBar, middleBar, rightBar;
+	public bool multiplierOnePlayer10, multiplierOnePlayer20, multiplierTwoPlayer10;
 
 	public float timer;
 	float maxTimer;
@@ -72,210 +82,160 @@ public class Line : MonoBehaviour
 			pieces[i].gameObject.SetActive(on);
 	}
 
+	public void RightTrigger(){
+
+		if (player1) {
+			rightTrigger = Input.GetAxis ("JoystickRightTrigger");
+		} else {
+			rightTrigger = Input.GetAxis ("Joystick2RightTrigger");
+		}
+
+		if (((rightTrigger < -.5f) && (rightTriggerLast > -.5f)) || (Input.GetKeyDown (KeyCode.LeftShift))) {
+
+			if (!twoPlayer) {
+				if (multiplierOnePlayer20) {
+					ShiftTwoPlaces ();
+				} else if (multiplierOnePlayer10) {
+					ShiftOnePlace ();
+				}
+			}
+		}
+
+		if (player1) {
+			rightTriggerLast = Input.GetAxis ("JoystickRightTrigger");
+		} else {
+			rightTriggerLast = Input.GetAxis ("Joystick2RightTrigger");
+		}
+	}
+
+	void ShiftOnePlace(){
+		if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
+		else
+			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
+
+		if (rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+			rightBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
+		else
+			rightBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
+	}
+
+	void ShiftTwoPlaces(){
+		if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
+		else if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple)
+			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.orange;
+		else
+			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
+
+		if (rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+			rightBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
+		else if (rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple)
+			rightBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.orange;
+		else
+			rightBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
+
+		if (middleBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+			middleBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
+		else if (middleBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple)
+			middleBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.orange;
+		else
+			middleBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
+	}
+
+	public void OnDestroy(){
+
+		if (twoPlayer) {
+			if (player1)
+				GameObject.FindObjectOfType<TwoPlayerLives> ().blueLives = 0;
+			else
+				GameObject.FindObjectOfType<TwoPlayerLives> ().purpleLives = 0;
+		}
+	}
+
 	public void Update(){
 
-		//Time.timeScale = 0;
+		RightTrigger ();
 
-        if (purpBlueTimer > 0)
-        {
-
-            purpBlueTimer -= Time.timeScale;
-        }
-        else
-        {
-
-            hitAPurp = false;
-            hitABlue = false;
-        }
-
+		if (purpBlueTimer > 0) //DoubleDipperAchievement
+			purpBlueTimer -= Time.timeScale;
+		else {
+			hitAPurp = hitABlue = false;
+		}
         if (hitABlue && hitAPurp)
         {
-
             GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_DOUBLE_DIPPER, "ACH_DOUBLE_DIPPER", "a"));
         }
 
-        timeCount = Time.time * 2 - startTime;
+        timeCount = Time.time * 2 - startTime; //SurvivorAchievement
         min = (int)(timeCount / 60);
         sec = (int)(timeCount % 60);
-
         if (min == 5)
         {
-
             GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_SURVIVOR, "ACH_SURVIVOR", "a"));
         }
 
 		if (twoPlayer) {
-
-			if (!player1) {
-
-				rightTrigger = Input.GetAxis ("JoystickRightTrigger");
-			} else {
-
-				rightTrigger = Input.GetAxis ("Joystick2RightTrigger");
-			}
-		} else {
-
-			rightTrigger = Input.GetAxis ("JoystickRightTrigger");
-		}
-
-		if ((scoreScr.GetComponent<ScoreCenter> ().multiplier >= 10 || scoreScr.GetComponent<ScoreCenter> ().multiplier2 >= 10)) {
-
-			if (twoPlayer) {
-
-				if (!hitmultiplierForTwoPlayer) {
-
-					scoreScr.ResetPseudo (3);
-
-					hitmultiplierForTwoPlayer = true;
-					//GameObject.FindGameObjectWithTag ("Freezer").GetComponent<FreezeAllEnemies> ().BeginFreeze ();
-
-					if (!glow1.activeSelf) {
-
-						glow1.SetActive (true);
-						glow2.SetActive (true);
-					}	
-				}
-
-				hitmultiplierForTwoPlayer = true;
-			}
-		}
-
-		if ((scoreScr.GetComponent<ScoreCenter> ().multiplier >= 20 && !hitMultiplier2) || GameObject.FindGameObjectWithTag ("Spawner").GetComponent<Spawner> ().hitMulti4 && !hitMultiplier2) {
-			if (!twoPlayer) {
-
-				scoreScr.ResetPseudo (5);
-
-				hitMultiplier2 = true;
-
-				if (!glow3.activeSelf) {
-
-					glow3.SetActive (true);
-					glow4.SetActive (true);
-				}	
-
-				purple.GetComponent<Scale1Direction> ().desiredScale = new Vector3 (.333f, 1, 2);
-				purple2.GetComponent<Scale1Direction> ().desiredScale = new Vector3 (.333f, 1, 2);
-			}
-		}
-
-		if ((scoreScr.GetComponent<ScoreCenter> ().multiplier >= 10 && !hitMultiplier) || GameObject.FindGameObjectWithTag("Spawner").GetComponent<Spawner> ().hitMulti3 && !hitMultiplier) {
-
-			if (!twoPlayer) {
-
-				hitMultiplier = true;
-
-				if (purpleFill.GetComponent<ParticleSystem>().isPlaying == false)
-				{
-
-					purpleFill.GetComponent<ParticleSystem>().Play();
-				}
-
-
-				scoreScr.ResetPseudo (2);
-				scoreScr.increaseMultiplierGrowth = true;
-			}
-		
-			//Debug.Log("DO GLOW THINGY!");
-            GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements>().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_DOUBLE_TROUBLE, "ACH_DOUBLE_TROUBLE", "a"));
-           // GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements> ().UnlockAchievement(GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements> ().)
-        }
-
-		if (!twoPlayer) {
-
-			if (hitMultiplier2)
-				orange.SetActive (true);
-
-			if (hitMultiplier) {
+			if ((scoreScr.multiplier >= 10 || scoreScr.multiplier2 >= 10) && !multiplierTwoPlayer10) {
+				scoreScr.ResetPseudo (3);
+				multiplierTwoPlayer10 = true;
 
 				if (!glow1.activeSelf) {
-
 					glow1.SetActive (true);
 					glow2.SetActive (true);
 				}
-
-				if (!purple2.activeSelf)
-					purple.SetActive (true);
-			} else {
-
-				glow1.SetActive (false);
-				glow2.SetActive (false);
-
-				purple.SetActive (false);
-				purple2.SetActive (false);
 			}
 
-			if (purple.activeSelf) {
-
-				//if (Input.GetKeyDown (KeyCode.Joystick1Button5)) {
-
-				if ((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown (KeyCode.LeftShift)) {
-
-					triggesPressed++;
-
-					purple.SetActive (false);
-					purple2.SetActive (true);
-				}
-			} else if (purple2.activeSelf) {
-
-				if ((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown (KeyCode.LeftShift)) {
-
-					triggesPressed++;
-
-					purple.SetActive (true);
-					purple2.SetActive (false);
-				}
-			}
-		} if (twoPlayer){
-
-			if (!hitmultiplierForTwoPlayer && (scoreScr.GetComponent<ScoreCenter> ().multiplier >= 10 || scoreScr.GetComponent<ScoreCenter> ().multiplier2 >= 10)) {
-
-				hitmultiplierForTwoPlayer = true;
-			}
-
-			if (hitmultiplierForTwoPlayer) {
-
-				if (!orangeMulti.activeSelf && !orangeMulti2.activeSelf) {
-
+			if (multiplierTwoPlayer10) {
+				if (!orangeMulti.activeSelf && !orangeMulti2.activeSelf)
 					orangeMulti.SetActive (true);
-				}
-
-				if (!orangeMulti2.activeSelf) {
-
+				if (!orangeMulti2.activeSelf)
 					orangeMulti.SetActive (true);
-				} else {
-
+				else
 					orangeMulti2.SetActive (true);
-				}
-
-			}
-
-			if ((rightTrigger == -1 && rightTriggerLast != -1) || Input.GetKeyDown (KeyCode.LeftShift)) {
-
-				if (orangeMulti.activeSelf) {
-
-					orangeMulti.SetActive (false);
-					orangeMulti2.SetActive (true);
-				} else if (orangeMulti2.activeSelf) {
-
-					orangeMulti.SetActive (true);
-					orangeMulti2.SetActive (false);
-				}
-			}
-
-		}
-
-		if (twoPlayer) {
-
-			if (!player1) {
-
-				rightTriggerLast = Input.GetAxis ("JoystickRightTrigger");
-			} else {
-
-				rightTriggerLast = Input.GetAxis ("Joystick2RightTrigger");
 			}
 		} else {
+			if (scoreScr.multiplier >= 20 && !multiplierOnePlayer20) { //If doesn't work,  || GameObject.FindGameObjectWithTag ("Spawner").GetComponent<Spawner> ().hitMulti4 && !multiplierOnePlayer20) {
+				middleBar.SetActive(true);
+				rightBar.GetComponent<Scale1Direction> ().desiredScale.x = (1 / 3f);
+				middleBar.GetComponent<Scale1Direction> ().desiredScale.x = (1 / 3f);
+				leftBar.GetComponent<Scale1Direction> ().desiredScale.x = (1 / 3f);
+				scoreScr.ResetPseudo (5);
+				multiplierOnePlayer20 = true;
+				//!!purple.GetComponent<Scale1Direction> ().desiredScale = new Vector3 (.33334f, 1, 2);
+				//!!purple2.GetComponent<Scale1Direction> ().desiredScale = new Vector3 (.33334f, 1, 2);
+				if (!glow3.activeSelf) {
+					glow3.SetActive (true);
+					glow4.SetActive (true);
+				}
+			}
 
-			rightTriggerLast = Input.GetAxis ("JoystickRightTrigger");
+			if (scoreScr.multiplier >= 10 && !multiplierOnePlayer10) { //If doesn't work || GameObject.FindGameObjectWithTag("Spawner").GetComponent<Spawner> ().hitMulti3 && !multiplierOnePlayer10) {
+				leftBar.SetActive (true);
+				rightBar.SetActive (true);
+
+				multiplierOnePlayer10 = scoreScr.increaseMultiplierGrowth = true;
+				scoreScr.ResetPseudo (2);
+				GameObject.FindGameObjectWithTag("SteamManager").GetComponent<SteamStatsAndAchievements> ().UnlockAchievement(new SteamStatsAndAchievements.Achievement_t(SteamStatsAndAchievements.Achievement.ACH_DOUBLE_TROUBLE, "ACH_DOUBLE_TROUBLE", "a"));
+				if (!purpleFill.GetComponent<ParticleSystem> ().isPlaying)
+					purpleFill.GetComponent<ParticleSystem> ().Play ();
+			}
+
+			//!!if (multiplierOnePlayer20)
+				//!!orange.SetActive (true);
+			if (multiplierOnePlayer10) {
+				if (!glow1.activeSelf) {
+					glow1.SetActive (true);
+					glow2.SetActive (true);
+				}
+				/*if (!purple2.activeSelf)
+					purple.SetActive (true);*/
+			} else {
+				glow1.SetActive (false);
+				glow2.SetActive (false);
+				/*purple.SetActive (false);
+				purple2.SetActive (false);*/
+			}
 		}
 	}
 
@@ -323,14 +283,55 @@ public class Line : MonoBehaviour
 		}
 	}
 
-	void CheckHit(GameObject obj, Vector3 point, Collider2D coll)
+	void CheckHit(GameObject obj, Vector3 point, Collider2D coll){
+		if (obj.layer == 9) {
+			if (!twoPlayer) {
+				if (multiplierOnePlayer20) {
+					if (Vector3.Distance (pieces [4].position, point) < Vector3.Distance (pieces [3].position, point))
+						HitLeftSide (obj);
+					else if (Vector3.Distance (pieces [5].position, point) < Vector3.Distance (pieces [3].position, point))
+						HitRightSide (obj);
+					else {
+						if (player1)
+							HitCenter (obj, 1);
+						else
+							HitCenter (obj, 2);
+					}
+				} else if (multiplierOnePlayer10) {
+					if (Vector3.Distance (pieces [4].position, point) < Vector3.Distance (pieces [5].position, point))
+						HitLeftSide (obj);
+					else
+						HitRightSide (obj);
+				} else {
+					if (obj.tag == "Ball")
+						HitBlueGood (obj);
+				}
+			}
+		} else if (obj.layer == 10) {
+			if (obj.gameObject.GetComponent<Ball> () != null) {
+				if (obj.gameObject.GetComponent<Ball> ().pop != null) {
+					if (obj.GetComponent<Bomb> () == null) {
+						Destroy (Instantiate (bluePop, obj.transform.position, Quaternion.identity), 1);
+					}
+				}
+			}
+			if (obj.gameObject.GetComponent<Bomb> () == null) {
+				HitBad (obj);
+			}
+		} else if (obj.layer == 15) {
+			HitBad (obj);
+			obj.gameObject.GetComponent<Bomb>().warning.SetActive(false);
+		}
+	}
+
+	/*void CheckHit(GameObject obj, Vector3 point, Collider2D coll)
 	{
 
 		if (obj.layer == 9) {
 
 			if (twoPlayer) {
 
-				if (hitmultiplierForTwoPlayer) {
+				if (multiplierTwoPlayer10) {
 
 					if (player1) {
 
@@ -460,7 +461,7 @@ public class Line : MonoBehaviour
 				}
 			} else {
 
-				if (hitMultiplier2) {
+				if (multiplierOnePlayer20) {
 
 					if(Vector2.Distance(obj.transform.position, pieces [3].position) < Vector2.Distance (obj.transform.position, pieces[5].position)){ //Center than Right
 						if (Vector2.Distance (obj.transform.position, pieces [3].position) < Vector2.Distance (obj.transform.position, pieces [4].position)) { //Center than left
@@ -489,7 +490,7 @@ public class Line : MonoBehaviour
 							HitRightSide (obj);
 						}
 					}
-				}else if (hitMultiplier) {
+				}else if (multiplierOnePlayer10) {
 
 					if (Vector2.Distance (obj.transform.position, pieces [0].position) < Vector2.Distance (obj.transform.position, pieces [1].position)) {
 
@@ -551,69 +552,73 @@ public class Line : MonoBehaviour
 			HitBad (obj);
 			obj.gameObject.GetComponent<Bomb>().warning.SetActive(false);
 		}
-	}
+	}*/
 
 	void HitRightSide(GameObject obj2){
 
-		if (obj2.tag == "Orange") {
-			HitBad (obj2);
-		}
-
-		if (purple.activeSelf) {
-
-			if (obj2.tag == "Purple") {
-
-				HitPurpleGood (obj2);
-			} else if (obj2.tag == "Ball") {
-
-				HitBad (obj2);
-			}
-		} else if (purple2.activeSelf) {
-
-			if (obj2.tag == "Ball") {
-
+		if (rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue) {
+			if (obj2.tag == "Ball")
 				HitBlueGood (obj2);
-			} else if (obj2.tag == "Purple") {
-
+			else
 				HitBad (obj2);
-			}
+		} else if (rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple) {
+			if (obj2.tag == "Purple")
+				HitPurpleGood (obj2);
+			else
+				HitBad (obj2);
+		} else if (rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.orange) {
+			if (obj2.tag == "Orange")
+				HitOrangeGood (obj2);
+			else
+				HitBad (obj2);
 		}
 	}
 
 	void HitLeftSide(GameObject obj2){
 
-		if (obj2.tag == "Orange") {
-
-			HitBad (obj2);
-		}
-
-		if (purple.activeSelf) {
-
-			if (obj2.tag == "Ball") {
-
+		if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue) {
+			if (obj2.tag == "Ball")
 				HitBlueGood (obj2);
-			} else if (obj2.tag == "Purple") {
-
+			else
 				HitBad (obj2);
-			}
-		} else if (purple2.activeSelf) {
-
-			if (obj2.tag == "Purple") {
-
+		} else if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple) {
+			if (obj2.tag == "Purple")
 				HitPurpleGood (obj2);
-			} else if (obj2.tag == "Ball") {
-
+			else
 				HitBad (obj2);
-			}
+		} else if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.orange) {
+			if (obj2.tag == "Orange")
+				HitOrangeGood (obj2);
+			else
+				HitBad (obj2);
 		}
 	}
 
-	void HitOrangeGood(GameObject obj9, int player){
+	void HitCenter(GameObject objO, int player){
 
+		if (middleBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue) {
+			if (objO.tag == "Ball")
+				HitBlueGood (objO);
+			else
+				HitBad (objO);
+		} else if (middleBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple) {
+			if (objO.tag == "Purple")
+				HitPurpleGood (objO);
+			else
+				HitBad (objO);
+		} else if (middleBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.orange) {
+			if (objO.tag == "Orange")
+				HitOrangeGood (objO);
+			else
+				HitBad (objO);
+		}
+	}
+
+	void HitOrangeGood (GameObject obj9){
 		if (twoPlayer) {
 
 			Destroy(Instantiate(bluePop, obj9.transform.position, Quaternion.identity), 1);
-			scoreScr.AddScoreMultiplier (player);
+			//scoreScr.AddScoreMultiplier (player);
 			obj9.SendMessage ("DestroyBall");
 		} else {
 
@@ -745,7 +750,7 @@ public class Line : MonoBehaviour
 
 	public void HitBad(GameObject obj3){
 
-		if (!invincible) {
+		if (!invincibleToColors || !invincibleToEnemies) {
 
 			if (twoPlayer) {
 
@@ -807,15 +812,23 @@ public class Line : MonoBehaviour
 					audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
 				} else {
 
-					audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
-					GameController.instance.StartCoroutine ("EndGame");
-					GetComponent<Line> ().enabled = false;
+					if (!invincibleToEnemies) {
+						audioS.PlayOneShot (failSounds [Random.Range (0, failSounds.Length - 1)]);
+						GameController.instance.StartCoroutine ("EndGame");
+						GetComponent<Line> ().enabled = false;
+					} else {
+						Destroy (obj3.gameObject);
+					}
 				}
 			} else {
 
 				if (obj3.tag == "Ball" || obj3.tag == "Orange" || obj3.tag == "Purple") {
 
-					Destroy (obj3.gameObject);
+					if (invincibleToColors)
+						Destroy (obj3.gameObject);
+					else {
+
+					}
 				}
 			}
 		}

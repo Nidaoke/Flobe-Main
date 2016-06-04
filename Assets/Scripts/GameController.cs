@@ -476,22 +476,22 @@ public class GameController : MonoBehaviour
 		gameOver = false;
 		preGame = true;
 
-		lineScr.GetComponent<Line> ().hitMultiplier = false;
+		lineScr.GetComponent<Line> ().multiplierOnePlayer10 = false;
 
-		lineScr.purple.transform.localPosition = lineScr.purple.GetComponent<Scale1Direction> ().originalPosition;
-		lineScr.purple.transform.localScale = lineScr.purple.GetComponent<Scale1Direction> ().originalScale;
+		//!!lineScr.purple.transform.localPosition = lineScr.purple.GetComponent<Scale1Direction> ().originalPosition;
+		//!!lineScr.purple.transform.localScale = lineScr.purple.GetComponent<Scale1Direction> ().originalScale;
 
-		lineScr.purple2.transform.localPosition = lineScr.purple2.GetComponent<Scale1Direction> ().originalPosition;
-		lineScr.purple2.transform.localScale = lineScr.purple2.GetComponent<Scale1Direction> ().originalScale;
+		//!!lineScr.purple2.transform.localPosition = lineScr.purple2.GetComponent<Scale1Direction> ().originalPosition;
+		//!!lineScr.purple2.transform.localScale = lineScr.purple2.GetComponent<Scale1Direction> ().originalScale;
 
 		if (lineScr.twoPlayer) {
-			lineScr2.GetComponent<Line> ().hitMultiplier = false;
+			lineScr2.GetComponent<Line> ().multiplierOnePlayer10 = false;
 
-			lineScr2.purple.transform.localPosition = lineScr2.purple.GetComponent<Scale1Direction> ().originalPosition;
-			lineScr2.purple.transform.localScale = lineScr2.purple.GetComponent<Scale1Direction> ().originalScale;
+			//!!lineScr2.purple.transform.localPosition = lineScr2.purple.GetComponent<Scale1Direction> ().originalPosition;
+			//!!lineScr2.purple.transform.localScale = lineScr2.purple.GetComponent<Scale1Direction> ().originalScale;
 
-			lineScr2.purple2.transform.localPosition = lineScr2.purple2.GetComponent<Scale1Direction> ().originalPosition;
-			lineScr2.purple2.transform.localScale = lineScr2.purple2.GetComponent<Scale1Direction> ().originalScale;
+			//!!lineScr2.purple2.transform.localPosition = lineScr2.purple2.GetComponent<Scale1Direction> ().originalPosition;
+			//!!lineScr2.purple2.transform.localScale = lineScr2.purple2.GetComponent<Scale1Direction> ().originalScale;
 		}
 
 		//rightObject.transform.position = rightObject.GetComponent<TestFollower> ().startPos;

@@ -39,7 +39,9 @@ public class Bomb : Ball
 		//Destroy (this);
 	}
 
-
+	void OnDestroy(){
+		GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddBombEnemy ();
+	}
 
 	IEnumerator Explode(){
 

@@ -3,6 +3,9 @@ using System.Collections;
 
 public class SideCapCode : MonoBehaviour {
 
+	public int fakeCount;
+	//GameObject[] fakes;
+
 	public bool flush;
 
 	// Use this for initialization
@@ -12,25 +15,13 @@ public class SideCapCode : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (fakeCount >= 80)
+			flush = true;
 	}
-
-	void OnTriggerStay2D(Collider2D other){
-
+	void OnTriggerEnter2D(Collider2D other){
 		if (other.gameObject.layer == 20) {
-
-			if (other.gameObject.GetComponent<PolygonCollider2D> () != null) {
-
-				if (other.gameObject.GetComponent<Rigidbody2D> ().velocity == Vector2.zero) {
-
-					if (GameObject.FindObjectOfType<Line> ().invincible) {
-
-
-					} else {
-
-						flush = true;
-					}
-				}
+			if (other.gameObject.GetComponentInParent<PolygonCollider2D> () != null) {
+				fakeCount++;
 			}
 		}
 	}

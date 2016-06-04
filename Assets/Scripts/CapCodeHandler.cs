@@ -3,8 +3,8 @@ using System.Collections;
 
 public class CapCodeHandler : MonoBehaviour {
 
-	public GameObject old;
-	public GameObject newer;
+	public GameObject blue;
+	public GameObject purple;
 	public GameObject orange;
 
 	public GameObject line;
@@ -14,12 +14,48 @@ public class CapCodeHandler : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 	
-		newer.SetActive (false);
-		old.SetActive (true);
+		purple.SetActive (false);
+		blue.SetActive (true);
 	}
 	
 	// Update is called once per frame
-	void Update () {
+
+	void Update(){
+		if (isLeft) {
+			if (line.GetComponent<Line> ().multiplierOnePlayer10) {
+				if (line.GetComponent<Line> ().leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue) {
+					blue.SetActive (true);
+					purple.SetActive (false);
+					orange.SetActive (false);
+				} else if (line.GetComponent<Line> ().leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple) {
+					blue.SetActive (false);
+					purple.SetActive (true);
+					orange.SetActive (false);
+				} else {
+					blue.SetActive (false);
+					purple.SetActive (false);
+					orange.SetActive (true);
+				}
+			}
+		} else {
+			if (line.GetComponent<Line> ().multiplierOnePlayer10) {
+				if (line.GetComponent<Line> ().rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue) {
+					blue.SetActive (true);
+					purple.SetActive (false);
+					orange.SetActive (false);
+				} else if (line.GetComponent<Line> ().rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple) {
+					blue.SetActive (false);
+					purple.SetActive (true);
+					orange.SetActive (false);
+				} else {
+					blue.SetActive (false);
+					purple.SetActive (false);
+					orange.SetActive (true);
+				}
+			}
+		}
+	}
+	/*void Update () {
 	
 		if (line.GetComponent<Line> ().purple.activeSelf) {
 
@@ -108,5 +144,5 @@ public class CapCodeHandler : MonoBehaviour {
 				}
 			}
 		}
-	}
+	}*/
 }

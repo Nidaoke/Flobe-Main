@@ -39,7 +39,7 @@ public class Collectable : Ball
 				GameController.instance.scoreScr.ResetMultiplier(true);
 			}
 
-			if (!GameObject.FindObjectOfType<Line> ().invincible) {
+			if (!GameObject.FindObjectOfType<Line> ().invincibleToColors) {
 
 				GameObject.FindObjectOfType<SeekerSpawner>().SpawnSeeker();
 			}

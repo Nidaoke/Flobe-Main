@@ -126,7 +126,6 @@ public class Ball : MonoBehaviour
                 rb.MovePosition(transform.position + dir * Time.deltaTime * moveSpeed);
                 yield return new WaitForFixedUpdate();
             }
-
             missed = true;
             Destroy(this.gameObject);
         }

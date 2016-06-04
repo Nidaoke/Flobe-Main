@@ -77,7 +77,7 @@ public class ScoreCenter : MonoBehaviour
 
 				multiplierVisual.gameObject.SetActive (true);
 				scoreMesh.text = string.Format ("{0:0000}", score);
-				scoreMesh.gameObject.transform.position = new Vector3 (scoreMesh.gameObject.transform.position.x - 1.2f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
+				scoreMesh.gameObject.transform.position = new Vector3 (scoreMesh.gameObject.transform.position.x, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
 			}
 
 			///	transform.position = new Vector3 (-16, 6.45f, 2);
@@ -86,17 +86,8 @@ public class ScoreCenter : MonoBehaviour
 
 			//liveVisual.material.SetFloat ("_Cutoff", .1f);
 
-			Line[] lines = GameObject.FindObjectsOfType<Line> ();
-			foreach (Line line in lines) {
-
-				if (line.player1) {
-
-					lifeMesh.text = line.lives.ToString();
-				} else {
-					
-					lifeMesh2.text = line.lives.ToString();
-				}
-			}
+			lifeMesh.text = GameObject.FindObjectOfType<TwoPlayerLives> ().blueLives.ToString();
+			lifeMesh2.text = GameObject.FindObjectOfType<TwoPlayerLives> ().purpleLives.ToString();
 
 			//lifeMesh.text = string.Format("{0:0000}", 
 
@@ -120,23 +111,22 @@ public class ScoreCenter : MonoBehaviour
 			}
 		}
 
-		if (multiplierVisual.gameObject.activeSelf == false)
-		{
+		if (multiplierVisual.gameObject.activeSelf == false) {
 
 			if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer) {
 
 				multiplierVisual.gameObject.SetActive (true);
 				multiplierVisual2.gameObject.SetActive (true);
 
-				multiplierVisual.gameObject.transform.position = new Vector3 (-5.4692f, multiplierVisual2.gameObject.transform.position.y, multiplierVisual2.gameObject.transform.position.z);
-				multiplierVisual2.gameObject.transform.position = new Vector3 (5.4692f, multiplierVisual.gameObject.transform.position.y, multiplierVisual.gameObject.transform.position.z);
+				multiplierVisual.gameObject.transform.position = new Vector3 (-7.5f, multiplierVisual2.gameObject.transform.position.y, multiplierVisual2.gameObject.transform.position.z);
+				multiplierVisual2.gameObject.transform.position = new Vector3 (7.3f, multiplierVisual.gameObject.transform.position.y, multiplierVisual.gameObject.transform.position.z);
 
-				scoreMesh.text = string.Format("{0:0000}", score);
+				scoreMesh.text = string.Format ("{0:0000}", score);
 				scoreMesh2.gameObject.SetActive (true);
-				scoreMesh2.text = string.Format("{0:0000}", score2);
+				scoreMesh2.text = string.Format ("{0:0000}", score2);
 
-				scoreMesh.gameObject.transform.position = new Vector3 (-.2f, scoreMesh2.gameObject.transform.position.y, scoreMesh2.gameObject.transform.position.z);
-				scoreMesh2.gameObject.transform.position = new Vector3 (4f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
+				scoreMesh.gameObject.transform.position = new Vector3 (-.4f, scoreMesh2.gameObject.transform.position.y, scoreMesh2.gameObject.transform.position.z);
+				scoreMesh2.gameObject.transform.position = new Vector3 (2.6f, scoreMesh.gameObject.transform.position.y, scoreMesh.gameObject.transform.position.z);
 			}
 		}
 	}
@@ -145,7 +135,7 @@ public class ScoreCenter : MonoBehaviour
 	{
 		if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false) {
 
-			if (!GameObject.FindObjectOfType<Line> ().invincible) {
+			if (!GameObject.FindObjectOfType<Line> ().invincibleToColors) {
 
 				score += (multiplier * 2);												//add the multiplier to the score
 				scoreMesh.text = string.Format ("{0:0000}", score);
@@ -297,7 +287,8 @@ public class ScoreCenter : MonoBehaviour
 			GameController.instance.colorScr.hueShiftSpeed += 0.01f;
 			spawnScr.spawnRateScale += 0.01f;
 			spawnScr.ballSpeedScale += 0.01f;
-			bgScr.rotSpeed += 0.001f;
+			if (bgScr != null)
+				bgScr.rotSpeed += 0.001f;
 			if(multiplier > 20)
 				spawnScr.homingChance += 0.0005f;
 		}
@@ -312,7 +303,8 @@ public class ScoreCenter : MonoBehaviour
 		GameController.instance.colorScr.hueShiftSpeed += 0.01f;
 		spawnScr.spawnRateScale += 0.01f;
 		spawnScr.ballSpeedScale += 0.01f;
-		bgScr.rotSpeed += 0.001f;
+		if (bgScr != null)
+			bgScr.rotSpeed += 0.001f;
 		if (multiplier > 20 || multiplier2 > 20)
 			spawnScr.homingChance += 0.0005f;
 
@@ -325,7 +317,7 @@ public class ScoreCenter : MonoBehaviour
 	{
 		if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false) {
 
-			if (!GameObject.FindObjectOfType<Line> ().invincible) {
+			if (!GameObject.FindObjectOfType<Line> ().invincibleToColors) {
 
 				matchMultipliers = true;
 
@@ -359,7 +351,8 @@ public class ScoreCenter : MonoBehaviour
 
 				multiplier = 1;
 				multTimer = 1;
-				bgScr.rotSpeed -= 0.01f;
+				if (bgScr != null)
+					bgScr.rotSpeed -= 0.01f;
 			}
 		} else {
 
@@ -375,12 +368,15 @@ public class ScoreCenter : MonoBehaviour
 					}
 				}
 
-				matchMultipliers = true;
-				spawnScr.multiLevel /= 3;
+				if (!GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer) {
+					matchMultipliers = true;
+					spawnScr.multiLevel /= 3;
 
-				multiplier = 1;
-				multTimer = 1;
-				bgScr.rotSpeed -= 0.01f;
+					multiplier = 1;
+					multTimer = 1;
+					if (bgScr != null)
+						bgScr.rotSpeed -= 0.01f;
+				}
 			} else {
 
 				Line[] lines = GameObject.FindObjectsOfType<Line> ();
@@ -393,12 +389,15 @@ public class ScoreCenter : MonoBehaviour
 					}
 				}
 
-				matchMultipliers = true;
-				spawnScr.multiLevel /= 3;
+				if (!GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer) {
+					matchMultipliers = true;
+					spawnScr.multiLevel /= 3;
 
-				multiplier2 = 1;
-				multTimer2 = 1;
-				bgScr.rotSpeed -= 0.01f;
+					multiplier = 1;
+					multTimer = 1;
+					if (bgScr != null)
+						bgScr.rotSpeed -= 0.01f;
+				}
 			}
 		}
 	}

@@ -7,11 +7,15 @@ public class HandleTwoPlayer : MonoBehaviour {
 
 	public GameObject livesUI;
 
-	public GameObject leftFollower2, rightFollower2, leftFollower1, rightFollower1, lives1, lives2;
+	public GameObject leftFollower2, rightFollower2, leftFollower1, rightFollower1, lives1, lives2, uiLeft, uiRight;
 	public Line line, line2;
 
 	public void WhenGameBegins(){
 		if (twoPlayer) {
+
+			uiLeft.GetComponent<HandleSideBar> ().SetColor ("Blue");
+			uiRight.GetComponent<HandleSideBar> ().SetColor ("Purple");
+
 			livesUI.SetActive (true);
 
 			lives1.SetActive (true);
