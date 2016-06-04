@@ -10,6 +10,9 @@ public class ScoreCenter : MonoBehaviour
 	public bool currentlyGoodBonus;
 	public int goodBonusPoints = 0;
 
+	public GameObject showScoreForBonusPoints, showScoreForBonusFinal, showScoreForBonusX, showScoreForBonusEqual;
+	public Transform oldPosforFinal;
+
 	public bool currentlyBadBonus;
 	public int badBonusPoints = 100;
 
@@ -37,13 +40,41 @@ public class ScoreCenter : MonoBehaviour
 	bool lerping;
 	public float multTimer = 2f, multTimer2 = 2f;
 
+	void Start(){
+		//oldPosforFinal.position = showScoreForBonusFinal.transform.position;
+	}
+
 	public void HitGoodDuringBonus(){
 		if (currentlyGoodBonus)
 			goodBonusPoints++;
 	}
 
 	public void EndGoodBonus(){
+		//AddScoreWithoutUpsettingMultiplier (goodBonusPoints);
+		StartCoroutine(EndGoodaBonus());
+	}
+
+	public IEnumerator EndGoodaBonus(){
+		showScoreForBonusX.SetActive (true);
+		showScoreForBonusPoints.SetActive (true);
+		showScoreForBonusFinal.SetActive (true);
+		showScoreForBonusEqual.SetActive (true);
+		showScoreForBonusPoints.GetComponent<TextMesh> ().text = goodBonusPoints.ToString();
+		showScoreForBonusFinal.GetComponent<TextMesh> ().text = (goodBonusPoints * multiplier).ToString();
+		yield return new WaitForSeconds (1);
+		showScoreForBonusFinal.GetComponent<MoveToPosition> ().ActivateMoving ();
+		yield return new WaitForSeconds (.8f);
+		showScoreForBonusFinal.SetActive (false);
+		showScoreForBonusFinal.transform.position = oldPosforFinal.position;
 		AddScoreWithoutUpsettingMultiplier (goodBonusPoints);
+		yield return new WaitForSeconds (1);
+		showScoreForBonusPoints.GetComponent<TextMesh> ().text = 0.ToString();
+		showScoreForBonusFinal.GetComponent<TextMesh> ().text = 0.ToString();
+		showScoreForBonusFinal.transform.position = oldPosforFinal.position;
+		showScoreForBonusX.SetActive (false);
+		showScoreForBonusPoints.SetActive (false);
+		showScoreForBonusFinal.SetActive (false);
+		showScoreForBonusEqual.SetActive (false);
 	}
 
 	public void HitBadDuringBonus(){
@@ -52,7 +83,31 @@ public class ScoreCenter : MonoBehaviour
 	}
 
 	public void EndBadBonus(){
+		//AddScoreWithoutUpsettingMultiplier (badBonusPoints);
+		StartCoroutine(EndBadaBonus());
+	}
+
+	public IEnumerator EndBadaBonus(){
+		showScoreForBonusX.SetActive (true);
+		showScoreForBonusPoints.SetActive (true);
+		showScoreForBonusFinal.SetActive (true);
+		showScoreForBonusEqual.SetActive (true);
+		showScoreForBonusPoints.GetComponent<TextMesh> ().text = badBonusPoints.ToString();
+		showScoreForBonusFinal.GetComponent<TextMesh> ().text = (badBonusPoints * multiplier).ToString();
+		yield return new WaitForSeconds (1);
+		showScoreForBonusFinal.GetComponent<MoveToPosition> ().ActivateMoving ();
+		yield return new WaitForSeconds (.8f);
+		showScoreForBonusFinal.SetActive (false);
+		showScoreForBonusFinal.transform.position = oldPosforFinal.position;
 		AddScoreWithoutUpsettingMultiplier (badBonusPoints);
+		yield return new WaitForSeconds (1);
+		showScoreForBonusPoints.GetComponent<TextMesh> ().text = 0.ToString();
+		showScoreForBonusFinal.GetComponent<TextMesh> ().text = 0.ToString();
+		showScoreForBonusFinal.transform.position = oldPosforFinal.position;
+		showScoreForBonusX.SetActive (false);
+		showScoreForBonusPoints.SetActive (false);
+		showScoreForBonusFinal.SetActive (false);
+		showScoreForBonusEqual.SetActive (false);
 	}
 
     public void Awake()
@@ -72,6 +127,9 @@ public class ScoreCenter : MonoBehaviour
 	}
 
 	public void Update(){
+
+		if (currentlyBadBonus || currentlyGoodBonus)
+			GameObject.FindGameObjectWithTag ("Spawner").GetComponent<Spawner> ().pauseSpawning = true;
 
 		if (GameObject.FindObjectOfType<HandleTwoPlayer> ().twoPlayer == false) {
 

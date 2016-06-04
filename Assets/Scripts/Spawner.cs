@@ -32,6 +32,8 @@ public class Spawner : MonoBehaviour
 		float num;
 		GameObject wutToSpawn = ball;
 
+		yield return new WaitForSeconds (3);
+
 		for (int i = 0; i < 100; i++) {
 			thisAngle = SpacingFilter (thisAngle);									//finds a new spawn angle based on the previous one
 			transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);		//rotates,adjusts to suit editor setup
@@ -57,9 +59,9 @@ public class Spawner : MonoBehaviour
 
 			} else {
 				num = Random.value;
-				if (num < .6f)
+				if (num < .5f)
 					wutToSpawn = hazard;
-				else if (num < .8f)
+				else if (num < .9f)
 					wutToSpawn = homing;
 				else
 					wutToSpawn = bomb;
@@ -68,121 +70,17 @@ public class Spawner : MonoBehaviour
 			GameObject b = Instantiate (wutToSpawn, transform.position, Quaternion.identity) as GameObject;
 			b.GetComponent<Ball> ().moveSpeed += (scoreScr.pseudoMultiplier * 3) / (ballSpeedScale * 3);
 			b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
-
-			yield return new WaitForSeconds (.5f);
+			if(good)
+				yield return new WaitForSeconds (.35f);
+			else
+				yield return new WaitForSeconds (.32f);
 		}
 		Debug.Log ("Passed the For Loop!");
-		yield return new WaitForSeconds (5);
+		yield return new WaitForSeconds (10);
 		Debug.Log ("Passed the For Loop++!");
 
 		StartCoroutine( GameObject.FindObjectOfType<BonusManager> ().EndBonus ());
 			
-	}
-
-	public IEnumerator SpawnBlue(){
-
-		yield return new WaitForSeconds (Random.value * 45);
-
-		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
-		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
-
-		GameObject b = Instantiate (ball, transform.position, Quaternion.identity) as GameObject;
-
-		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
-
-		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
-
-		//b.GetComponent<Ball> ().approachEffect = null;
-		//b.GetComponent<Ball> ().particle.SetActive (false);
-	}
-
-	public IEnumerator SpawnGreen(){
-
-		Debug.Log ("SpawnGreen!");
-
-		yield return new WaitForSeconds (Random.value * 45);
-
-		Debug.Log ("Spawned!");
-
-		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
-		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
-
-		GameObject b = Instantiate (hazard, transform.position, Quaternion.identity) as GameObject;
-
-		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
-
-		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
-
-		//b.GetComponent<Ball> ().approachEffect = null;
-		//b.GetComponent<Ball> ().particle.SetActive (false);
-	}
-
-	public IEnumerator SpawnRed(){
-
-		yield return new WaitForSeconds (Random.value * 45);
-
-		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
-		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
-
-		GameObject b = Instantiate (homing, transform.position, Quaternion.identity) as GameObject;
-
-		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
-
-		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
-
-		//b.GetComponent<Ball> ().approachEffect = null;
-		//b.GetComponent<Ball> ().particle.SetActive (false);
-	}
-
-	public IEnumerator SpawnBomb(){
-
-		yield return new WaitForSeconds (Random.value * 45);
-
-		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
-		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
-
-		GameObject b = Instantiate (bomb, transform.position, Quaternion.identity) as GameObject;
-
-		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
-
-		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
-
-		//b.GetComponent<Ball> ().approachEffect = null;
-		//b.GetComponent<Ball> ().particle.SetActive (false);
-	}
-
-	public IEnumerator SpawnPurple(){
-
-		yield return new WaitForSeconds (Random.value * 45);
-
-		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
-		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
-
-		GameObject b = Instantiate(purple,transform.position,Quaternion.identity) as GameObject;		//create the ball that was resolved to be spawned
-
-		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
-
-		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
-
-		//b.GetComponent<Ball> ().approachEffect = null;
-		//b.GetComponent<Ball> ().particle.SetActive (false);
-	}
-
-	public IEnumerator SpawnOrange(){
-
-		yield return new WaitForSeconds (Random.value * 45);
-
-		thisAngle = SpacingFilter(thisAngle);									//finds a new spawn angle based on the previous one
-		transform.parent.rotation = Quaternion.Euler(0,0,thisAngle);			//rotates,adjusts to suit editor setup
-
-		GameObject b = Instantiate(orange,transform.position,Quaternion.identity) as GameObject;		//create the ball that was resolved to be spawned
-
-		b.GetComponent<Ball>().moveSpeed += (scoreScr.pseudoMultiplier * 3)/(ballSpeedScale * 3);
-
-		b.GetComponent<Ball> ().oldSpeed = b.GetComponent<Ball> ().moveSpeed;
-
-		//b.GetComponent<Ball> ().approachEffect = null;
-		//b.GetComponent<Ball> ().particle.SetActive (false);
 	}
 
 	public void Update(){

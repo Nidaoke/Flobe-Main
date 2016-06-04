@@ -93,9 +93,11 @@ public class GameController : MonoBehaviour
 			
 			bg.SetActive(false);
 		}
+
+		PickBackground ();
 		
-		currentBackground = backgrounds[Random.Range(0, backgrounds.Length)];
-		currentBackground.SetActive(true);
+		//currentBackground = backgrounds[Random.Range(0, backgrounds.Length)];
+		//currentBackground.SetActive(true);
 	}
 
 	IEnumerator CheckAnimations()
@@ -106,6 +108,24 @@ public class GameController : MonoBehaviour
 				yield return null;
 		}
 		animationsReady = true;
+	}
+
+	public void PickBackground(){
+		int backNum = Random.Range (0, backgrounds.Length);
+
+		if (PlayerPrefs.HasKey ("LastBackground")) {
+			if (backNum == PlayerPrefs.GetInt ("LastBackground")) {
+
+				PickBackground ();
+			} else {
+
+				currentBackground = backgrounds [backNum];
+				currentBackground.SetActive (true);
+				PlayerPrefs.SetInt ("LastBackground", backNum);
+			}
+		} else {
+			PlayerPrefs.SetInt ("LastBackground", 0);
+		}
 	}
 
 	public void DoThisToBegin(bool wasd){
@@ -392,6 +412,8 @@ public class GameController : MonoBehaviour
 		if(mStartInstructions != null)
 		{
 			mStartInstructions.StartFade();
+			//lineScr.SlowDown ();
+			//lineScr2.SlowDown ();
 		}
 	}
 

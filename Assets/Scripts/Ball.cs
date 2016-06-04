@@ -68,6 +68,8 @@ public class Ball : MonoBehaviour
 
 		//Debug.Log ("Freeze got initiated!");
 
+		StartCoroutine( GameObject.FindObjectOfType<Line> ().SlowDown ());
+
 		float tParam = 0;
 		float speedy = .7f;
 
@@ -84,6 +86,8 @@ public class Ball : MonoBehaviour
 	public void UnFreeze(){
 
 		//Debug.Log ("Freeze got unitiated!");
+
+		StartCoroutine( GameObject.FindObjectOfType<Line> ().SpeedUp ());
 
 		float tParam = 0;
 		float speedy = .7f;

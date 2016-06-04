@@ -37,6 +37,13 @@ public class BonusManager : MonoBehaviour {
 			GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus = true;
 		}
 
+		setToFreeze = false;
+
+		TestFollower[] testies = GameObject.FindObjectsOfType<TestFollower> ();
+		foreach (TestFollower test in testies) {
+			test.blockSpeed = false;
+		}
+
 		cap1.GetComponent<SideCapCode> ().flush = false;
 		cap2.GetComponent<SideCapCode> ().flush = false;
 
@@ -47,6 +54,11 @@ public class BonusManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+		if (cardPicker == null) {
+			//Debug.Log ("Help!");
+			//cardPicker = GameObject.FindGameObjectWithTag ("CardHolder");
+		}
+
 		if (setToFreeze) {
 			Ball[] baylls = GameObject.FindObjectsOfType<Ball> ();
 			foreach (Ball ball in baylls) {
@@ -56,20 +68,11 @@ public class BonusManager : MonoBehaviour {
 			foreach (TestFollower test in testies) {
 				test.blockSpeed = true;
 			}
-		} else {
-			Ball[] baylls = GameObject.FindObjectsOfType<Ball> ();
-			foreach (Ball ball in baylls) {
-				ball.UnFreeze ();
-			}
-			TestFollower[] testies = GameObject.FindObjectsOfType<TestFollower> ();
-			foreach (TestFollower test in testies) {
-				test.blockSpeed = false;
-			}
 		}
 
 		if (Input.GetKeyDown (KeyCode.U)) {
 
-			Flush ();
+			//Flush ();
 		}
 	
 		totalBlues = spawner1.GetComponent<SpawnFakes> ().blues;
@@ -85,14 +88,18 @@ public class BonusManager : MonoBehaviour {
 	}
 
 	public IEnumerator EndBonus(){
-		Debug.Log ("KILLLLL!");
-		GameObject.FindObjectOfType<ScoreCenter> ().EndBadBonus ();
-		GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus = false;
-		GameObject.FindObjectOfType<ScoreCenter> ().badBonusPoints = 100;
-		GameObject.FindObjectOfType<ScoreCenter> ().EndGoodBonus ();
-		GameObject.FindObjectOfType<ScoreCenter> ().currentlyGoodBonus = false;
-		GameObject.FindObjectOfType<ScoreCenter> ().goodBonusPoints = 0;
+		if (GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus) {
+			GameObject.FindObjectOfType<ScoreCenter> ().EndBadBonus ();
+			GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus = false;
+
+		} else if (GameObject.FindObjectOfType<ScoreCenter> ().currentlyGoodBonus) {
+			GameObject.FindObjectOfType<ScoreCenter> ().EndGoodBonus ();
+			GameObject.FindObjectOfType<ScoreCenter> ().currentlyGoodBonus = false;
+
+		}
 		yield return new WaitForSeconds(5);
+		GameObject.FindObjectOfType<ScoreCenter> ().badBonusPoints = 100;
+		GameObject.FindObjectOfType<ScoreCenter> ().goodBonusPoints = 0;
 		GameObject.FindObjectOfType<StartInstructionsFade> ().StartFade ();
 		yield return new WaitForSeconds (5f);
 		GameObject.FindObjectOfType<Spawner> ().pauseSpawning = false;
@@ -147,45 +154,8 @@ public class BonusManager : MonoBehaviour {
 		setToFreeze = true;
 		GameObject.FindObjectOfType<Spawner> ().pauseSpawning = true;
 		yield return new WaitForSeconds (3);
-
-		cardPicker.SetActive (true);
-
-		//GameObject.FindObjectOfType<Spawner> ().pauseSpawning = true;
-
-		/*Line[] lines = GameObject.FindObjectsOfType<Line> ();
-		foreach (Line line in lines) {
-
-			line.invincible = true;
-		}
-
-		yield return new WaitForSeconds (5);
-
-		inProcessofFlushing = false;
-
-		StartCoroutine (UnFlush ());
-
-		for(int i = 0; i < totalBlues; i++)
-		{
-			StartCoroutine (GameObject.FindObjectOfType<Spawner> ().SpawnBlue ());
-
-		}
-
-		for(int i = 0; i < totalPurples; i++)
-		{
-			StartCoroutine (GameObject.FindObjectOfType<Spawner> ().SpawnPurple ());
-		}
-
-		for(int i = 0; i < totalOranges; i++)
-		{
-			StartCoroutine (GameObject.FindObjectOfType<Spawner> ().SpawnOrange ());
-		}
-
-		cap1.GetComponent<SideCapCode> ().flush = false;
-		cap2.GetComponent<SideCapCode> ().flush = false;
-
-		bottom1.SetActive (false);
-		bottom2.SetActive (false);
-		*/
+		if (cardPicker != null)
+			cardPicker.SetActive (true);
 	}
 
 	public void Flush(){

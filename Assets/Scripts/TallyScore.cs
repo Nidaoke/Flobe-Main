@@ -35,7 +35,7 @@ public class TallyScore : MonoBehaviour
 			PlayerPrefs.SetInt("bestScoreLocal", score);
 		}
 		if(newScore)
-			StartCoroutine(FlashNewHighScore());
+			//StartCoroutine(FlashNewHighScore());
 		result = string.Format("{0:0000}", score);
 		//Social.ReportScore(score, "CgkI052F_vMSEAIQBg", (bool success) => {});
 	}
@@ -86,8 +86,8 @@ public class TallyScore : MonoBehaviour
 
 		GUI.Box(new Rect(555,150,eScreen.width-100-50,300),result,gameStyle.box);
 
-		if(newScore)
-			GUI.Label(new Rect(125,350,eScreen.width-200-50,50),"new best",gameStyle.label);
+		//if(newScore)
+			//GUI.Label(new Rect(125,350,eScreen.width-200-50,50),"new best",gameStyle.label);
 		
 		//GUI.Box(new Rect(125,eScreen.height-125-105,eScreen.width-200-50,100),"",gameStyle.box);
 		

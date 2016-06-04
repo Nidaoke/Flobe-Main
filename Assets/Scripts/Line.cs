@@ -121,7 +121,7 @@ public class Line : MonoBehaviour
 	}
 
 	void ShiftTwoPlaces(){
-		if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+		/*if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
 			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
 		else if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple)
 			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.orange;
@@ -140,7 +140,15 @@ public class Line : MonoBehaviour
 		else if (middleBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple)
 			middleBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.orange;
 		else
-			middleBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
+			middleBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;*/
+		if (leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
+		else if(leftBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple)
+			leftBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
+		if (rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.blue)
+			rightBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.purple;
+		else if(rightBar.GetComponent<LineBarPiece> ().myColor == LineBarPiece.possibleColors.purple)
+			rightBar.GetComponent<LineBarPiece> ().myColor = LineBarPiece.possibleColors.blue;
 	}
 
 	public void OnDestroy(){
@@ -151,6 +159,21 @@ public class Line : MonoBehaviour
 			else
 				GameObject.FindObjectOfType<TwoPlayerLives> ().purpleLives = 0;
 		}
+	}
+
+	public IEnumerator SlowDown(){
+		TestFollower[] testies = GameObject.FindObjectsOfType<TestFollower> ();
+		foreach (TestFollower test in testies) {
+			test.blockSpeed = true;
+		}
+		yield return new WaitForSeconds (0);
+	}
+	public IEnumerator SpeedUp(){
+		TestFollower[] testies = GameObject.FindObjectsOfType<TestFollower> ();
+		foreach (TestFollower test in testies) {
+			test.blockSpeed = false;
+		}
+		yield return new WaitForSeconds (0);
 	}
 
 	public void Update(){
@@ -628,7 +651,7 @@ public class Line : MonoBehaviour
 		}
 
 		if (!twoPlayer) {
-
+			GameObject.FindObjectOfType<ScoreCenter> ().HitGoodDuringBonus ();
 			GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
 			GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
 			if(!scoreScr.currentlyGoodBonus)
@@ -693,7 +716,7 @@ public class Line : MonoBehaviour
 				}
 			}
 		} else {
-
+			GameObject.FindObjectOfType<ScoreCenter> ().HitGoodDuringBonus ();
 			GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
 			GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
 			if(!scoreScr.currentlyGoodBonus)

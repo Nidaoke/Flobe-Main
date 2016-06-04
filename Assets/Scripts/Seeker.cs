@@ -15,7 +15,10 @@ public class Seeker : Ball
     void OnDestroy()
     {
 		if (!GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus) {
-			GameObject.FindObjectOfType<SpawnMonsterFakes> ().AddRedEnemy ();
+			GameObject[] sideSpawners = GameObject.FindGameObjectsWithTag ("SideSpawner");
+			GameObject sideSpawnerToSpawn = sideSpawners [Random.Range (0, sideSpawners.Length)];
+			if(!GameObject.FindObjectOfType<ScoreCenter> ().currentlyBadBonus)
+				sideSpawnerToSpawn.GetComponent<SpawnFakes> ().AddRedEnemy ();
 			GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().MissilesDodged++;
 			GameObject.FindGameObjectWithTag ("SteamManager").GetComponent<SteamStatsAndAchievements> ().m_bStoreStats = true;
 		}

@@ -15,7 +15,7 @@ public class SideCapCode : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (fakeCount >= 80)
+		if (fakeCount >= 55)
 			flush = true;
 	}
 	void OnTriggerEnter2D(Collider2D other){

@@ -44,7 +44,7 @@ public class CardHolderScript : MonoBehaviour {
 		selectedACard = false;
 		transform.position = oldPosition;
 
-		Instantiate (cardHolder, oldPosition, Quaternion.identity);
+		GameObject.FindObjectOfType<BonusManager> ().cardPicker = (Instantiate (cardHolder, oldPosition, Quaternion.identity) as GameObject);
 
 		Destroy (this.gameObject);
 
