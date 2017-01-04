@@ -6,7 +6,9 @@ public class Ball : MonoBehaviour
 	public GameObject approachEffect;
 	public float moveSpeed;
 	protected bool missed;
-	protected Vector3 dir;
+	public Vector3 dir;
+
+	public bool reversed;
 
 	public float oldSpeed;
 
@@ -25,6 +27,16 @@ public class Ball : MonoBehaviour
 		StartCoroutine(Move());
 	}
 
+	void OnCollisionEnter2D(Collision2D other){
+		if (other.gameObject.tag == "Explosion") {
+			if (!reversed) {
+				reversed = true;
+				ReverseDirection();
+			}
+
+		}
+	}
+
 	void Update(){
 
 		float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
@@ -32,6 +44,14 @@ public class Ball : MonoBehaviour
 		transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
 		transform.rotation *= Quaternion.Euler (0, 0, 90);
+
+		if (Input.GetKeyDown (KeyCode.U)) {
+			ReverseDirection ();
+		}
+	}
+
+	public virtual void ReverseDirection(){
+		dir = new Vector3 (-dir.x, dir.y, dir.z);
 	}
 
 	public void Pause(bool on)

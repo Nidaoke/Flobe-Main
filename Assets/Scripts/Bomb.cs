@@ -11,6 +11,10 @@ public class Bomb : Ball
 	public GameObject warning;
 
 	public Animator anim;
+
+	public override void ReverseDirection(){
+		//Do Nothing!
+	}
 	
 	void Start()
 	{

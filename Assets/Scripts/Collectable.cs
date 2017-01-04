@@ -8,11 +8,6 @@ public class Collectable : Ball
 	public AudioClip[] collectSounds;
 	public AudioClip alert;
 
-	void Update()
-	{
-
-	}
-
 	void DestroyBall()
 	{
 		GameObject c = Instantiate(collectAnim,transform.position,Quaternion.identity) as GameObject;
